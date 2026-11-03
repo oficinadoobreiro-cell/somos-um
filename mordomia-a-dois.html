@@ -1,0 +1,1123 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Saúde financeira do casal">
+<meta name="theme-color" content="#2B3A67">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Somos Um">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-size:14px}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Mordomia a Dois</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: cabeçalho fixo com abas (Diagnóstico → Trilha → Sonhos → Pequenas decisões), coluna única de 960px, painéis de resultado ao lado dos campos no desktop */
+:root{
+  --bg:#F3F6F3; --surface:#FFFFFF; --soft:#E8EEEA; --ink:#1D2925; --muted:#5A6964; --line:#D6DFDA;
+  --primary:#1F5C52; --primary-ink:#FFFFFF; --accent:#B87A12;
+  --good:#2C7D52; --warn:#B87A12; --bad:#B8463A;
+  --c1:#8C8A80; --c2:#2F6FB0; --c3:#1F7A5C; --c4:#7A4FB0; --c5:#C2702A; --c6:#B8364F;
+  --display:"Young Serif", Georgia, "Times New Roman", serif;
+  --body:"Figtree", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#111816; --surface:#19231F; --soft:#202C28; --ink:#E4EDE8; --muted:#9BABA5; --line:#2C3A35;
+  --primary:#62B4A4; --primary-ink:#0E1A17; --accent:#E2A944;
+  --good:#5DBB86; --warn:#E2A944; --bad:#E2786B;
+  --c1:#A9A79C; --c2:#6AA6E6; --c3:#4FC29A; --c4:#B08BE6; --c5:#EE9F55; --c6:#EE7A90; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#111816; --surface:#19231F; --soft:#202C28; --ink:#E4EDE8; --muted:#9BABA5; --line:#2C3A35;
+  --primary:#62B4A4; --primary-ink:#0E1A17; --accent:#E2A944;
+  --good:#5DBB86; --warn:#E2A944; --bad:#E2786B;
+  --c1:#A9A79C; --c2:#6AA6E6; --c3:#4FC29A; --c4:#B08BE6; --c5:#EE9F55; --c6:#EE7A90; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+.wrap{max-width:960px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-block:14px 6px}
+.brand h1{font-family:var(--display);font-weight:400;font-size:1.6rem;margin:0;color:var(--primary)}
+.logo{display:flex;align-items:center;gap:10px}
+.logo b{font-family:var(--body);font-weight:700;font-size:.8em;color:var(--accent)}
+.back{display:inline-flex;align-items:center;min-height:40px;padding:6px 14px;border-radius:999px;border:1px solid var(--primary);color:var(--primary);font-weight:600;font-size:.88rem;text-decoration:none}
+.back:hover{background:var(--soft)}
+.brand small{color:var(--muted);font-size:.85rem}
+nav{display:flex;gap:4px;overflow-x:auto;padding-bottom:0}
+nav button{font:inherit;font-weight:600;font-size:.92rem;background:none;border:0;border-bottom:3px solid transparent;color:var(--muted);padding:10px 12px;cursor:pointer;white-space:nowrap}
+nav button[aria-selected="true"]{color:var(--primary);border-bottom-color:var(--accent)}
+nav button:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+main{padding-block:24px 64px}
+h2{font-family:var(--display);font-weight:400;font-size:1.75rem;line-height:1.2;margin:0 0 6px;text-wrap:balance}
+h3{font-size:1.05rem;margin:0 0 10px}
+.lead{color:var(--muted);max-width:62ch;margin:0 0 20px}
+.verse{font-family:var(--display);color:var(--primary);font-size:1rem;margin:0 0 22px;max-width:60ch}
+.verse span{display:block;font-family:var(--body);font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:2px}
+.example{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:var(--soft);border-radius:10px;padding:10px 14px;margin-bottom:20px;font-size:.9rem}
+.example strong{color:var(--accent)}
+.grid2{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:22px;align-items:start}
+@media (max-width:760px){.grid2{grid-template-columns:minmax(0,1fr)}}
+fieldset{border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:16px 16px 6px;margin:0 0 16px}
+legend{font-weight:700;padding:0 6px;font-size:.95rem}
+.hint{color:var(--muted);font-size:.85rem;margin:-4px 0 12px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) 150px;gap:10px;align-items:center;margin-bottom:10px}
+.row label{font-size:.93rem}
+.row label em{display:block;font-style:normal;color:var(--muted);font-size:.78rem}
+.money{position:relative}
+.money::before{content:"R$";position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.85rem}
+input[type=number],input[type=text],select{width:100%;font:inherit;font-variant-numeric:tabular-nums;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px 10px}
+.money input{padding-left:34px;text-align:right}
+.check{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px;font-size:.93rem;cursor:pointer}
+.check input{width:20px;height:20px;margin-top:2px;accent-color:var(--primary);flex:none}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px}
+.sticky{position:sticky;top:120px}
+@media (max-width:760px){.sticky{position:static}}
+.score{display:flex;align-items:center;gap:18px;margin-bottom:16px}
+.gauge{width:112px;height:112px;flex:none}
+.score .lvl{font-family:var(--display);font-size:1.5rem;line-height:1.1}
+.score p{margin:4px 0 0;color:var(--muted);font-size:.9rem}
+.ind{display:grid;gap:12px}
+.ind-item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;font-size:.9rem}
+.ind-item b{font-variant-numeric:tabular-nums}
+.bar{grid-column:1/-1;height:7px;background:var(--soft);border-radius:4px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:4px}
+.pill{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 8px;border-radius:999px;border:1px solid currentColor}
+.good{color:var(--good)} .warn{color:var(--warn)} .bad{color:var(--bad)}
+.bg-good{background:var(--good)} .bg-warn{background:var(--warn)} .bg-bad{background:var(--bad)}
+.sum{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:16px 0 4px;padding-top:16px;border-top:1px solid var(--line)}
+.sum div{font-size:.78rem;color:var(--muted)}
+.sum b{display:block;font-size:1.05rem;color:var(--ink);font-variant-numeric:tabular-nums}
+@media (max-width:420px){.sum{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+.btn{font:inherit;font-weight:600;border-radius:8px;padding:10px 16px;cursor:pointer;border:1px solid var(--primary);background:var(--primary);color:var(--primary-ink)}
+.btn.ghost{background:transparent;color:var(--primary)}
+.btn.small{padding:6px 10px;font-size:.85rem}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+/* Trilha */
+.trail{list-style:none;margin:0;padding:0;position:relative}
+.trail::before{content:"";position:absolute;left:19px;top:20px;bottom:20px;width:2px;background:var(--line)}
+.step{position:relative;display:grid;grid-template-columns:40px minmax(0,1fr);gap:14px;margin-bottom:16px}
+.dot{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-weight:700;background:var(--surface);border:2px solid var(--line);color:var(--muted);z-index:1}
+.step.done .dot{background:var(--good);border-color:var(--good);color:var(--surface)}
+.step.now .dot{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.step .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.step.now .card{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 18%,transparent)}
+.step .top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.step h3{margin:0}
+.step p{margin:6px 0 0;color:var(--muted);font-size:.93rem}
+.step ul{margin:10px 0 0;padding-left:18px;font-size:.93rem}
+.step li{margin-bottom:4px}
+.decision{margin-top:10px;background:var(--soft);border-radius:8px;padding:10px 12px;font-size:.92rem}
+.decision b{color:var(--primary)}
+.step.later .card{opacity:.85}
+/* Sonhos */
+.cap{margin-bottom:22px}
+.capbar{height:14px;background:var(--soft);border-radius:7px;overflow:hidden;margin:8px 0 6px;display:flex}
+.capbar i{display:block;height:100%}
+.dreams{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.dream{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.dream .name{font-family:var(--display);font-size:1.15rem;border:0;background:transparent;padding:0;border-bottom:1px dashed var(--line);border-radius:0}
+.dream .f{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.dream .f label{font-size:.75rem;color:var(--muted);display:grid;gap:3px}
+.dream .f input{padding:7px 8px;font-size:.92rem}
+.prog{height:8px;background:var(--soft);border-radius:4px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--primary)}
+.out{font-size:.9rem;display:grid;gap:6px}
+.out .big{font-size:1.25rem;font-weight:700;color:var(--primary);font-variant-numeric:tabular-nums}
+.out .muted{color:var(--muted)}
+.rm{align-self:flex-end;font:inherit;font-size:.8rem;background:none;border:0;color:var(--muted);cursor:pointer;text-decoration:underline}
+.adddream{border:2px dashed var(--line);border-radius:14px;background:transparent;color:var(--primary);font:inherit;font-weight:600;min-height:140px;cursor:pointer}
+.ratebox{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:18px;font-size:.92rem}
+.ratebox select{width:auto}
+/* Simulador */
+.choice{display:grid;grid-template-columns:auto minmax(0,1fr) 130px;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.choice:last-child{border-bottom:0}
+.choice input[type=checkbox]{width:20px;height:20px;accent-color:var(--primary)}
+.choice span em{display:block;font-style:normal;font-size:.8rem;color:var(--muted)}
+.result-num{font-family:var(--display);font-size:2.2rem;color:var(--primary);line-height:1.1;font-variant-numeric:tabular-nums}
+.chart{width:100%;height:auto;display:block;margin-top:12px}
+.chart text{fill:var(--muted);font-size:11px;font-family:var(--body)}
+.chart .lbl{fill:var(--ink);font-weight:600}
+.note{font-size:.8rem;color:var(--muted);margin-top:28px;max-width:70ch}
+.debt{display:grid;grid-template-columns:minmax(0,1.6fr) repeat(3,minmax(0,1fr)) auto;gap:8px;align-items:end;padding:10px 0;border-bottom:1px solid var(--line)}
+.debt label{font-size:.75rem;color:var(--muted);display:grid;gap:3px}
+.debt input{padding:7px 8px;font-size:.92rem}
+.debt .x{font:inherit;background:none;border:0;color:var(--muted);cursor:pointer;font-size:1.2rem;padding:6px}
+@media (max-width:520px){.debt{grid-template-columns:repeat(3,minmax(0,1fr)) auto}.debt .dn{grid-column:1/-1}}
+.dt{width:100%;border-collapse:collapse;font-size:.92rem;font-variant-numeric:tabular-nums}
+.dt th{text-align:left;font-size:.75rem;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:600;padding:8px 10px;border-bottom:1px solid var(--line)}
+.dt td{padding:10px;border-bottom:1px solid var(--line)}
+.dt td.n{text-align:right}
+.dt .ord{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--soft);font-weight:700}
+.dt tr.first .ord{background:var(--accent);color:var(--surface)}
+/* Investimentos */
+.ivars{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:14px}
+.ivars label{font-size:.85rem;color:var(--muted);display:grid;gap:4px}
+@media (max-width:520px){.ivars{grid-template-columns:minmax(0,1fr)}}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.85rem;margin-bottom:6px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:14px;height:4px;border-radius:2px;display:inline-block}
+.ichart{width:100%;min-width:520px;height:auto;display:block}
+.ichart text{fill:var(--muted);font-size:11px;font-family:var(--body)}
+.risk{display:inline-flex;gap:3px}
+.risk i{width:9px;height:9px;border-radius:2px;background:var(--soft)}
+.risk.r1 i:nth-child(-n+1),.risk.r2 i:nth-child(-n+2){background:var(--good)}
+.risk.r3 i:nth-child(-n+3){background:var(--warn)}
+.risk.r4 i:nth-child(-n+4),.risk.r5 i{background:var(--bad)}
+.dt td small{color:var(--muted)}
+.prem summary{cursor:pointer;font-weight:700}
+.premgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.premgrid label{font-size:.82rem;color:var(--muted);display:grid;gap:4px}
+/* Decidir compra */
+.tipos{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.tipos button{font:inherit;font-weight:600;padding:10px 16px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;min-height:44px}
+.tipos button[aria-checked="true"]{background:var(--primary);border-color:var(--primary);color:var(--primary-ink)}
+.verdict{border-radius:12px;padding:14px 16px;margin-bottom:16px}
+.verdict .lvl{font-family:var(--display);font-size:1.4rem;line-height:1.2}
+.verdict p{margin:6px 0 0;font-size:.92rem}
+.v-good{background:color-mix(in srgb,var(--good) 14%,transparent)}
+.v-warn{background:color-mix(in srgb,var(--warn) 16%,transparent)}
+.v-bad{background:color-mix(in srgb,var(--bad) 14%,transparent)}
+.kv{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 12px;font-size:.92rem;margin-bottom:14px}
+.kv b{font-variant-numeric:tabular-nums;text-align:right}
+.kv .sep{grid-column:1/-1;border-top:1px solid var(--line);margin:4px 0}
+.flags{margin:0 0 12px;padding-left:18px;font-size:.92rem}
+.flags li{margin-bottom:6px}
+/* Renda */
+.tips{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.tip{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.tip h3{margin:0 0 4px;font-size:1rem;color:var(--primary)}
+.tip p{margin:0;font-size:.9rem;color:var(--muted)}
+.biz{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.bcard{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.bcard .tag{font-size:.72rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--accent)}
+.bcard h4{margin:0;font-family:var(--display);font-weight:400;font-size:1.15rem}
+.bcard p{margin:0;font-size:.9rem;color:var(--muted)}
+.bmeta{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px;font-size:.82rem}
+.bmeta div{background:var(--soft);border-radius:8px;padding:6px 8px}
+.bmeta b{display:block;color:var(--ink);font-size:.88rem}
+.bcalc{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.bcalc label{font-size:.72rem;color:var(--muted);display:grid;gap:3px}
+.bcalc input{padding:7px 8px;font-size:.9rem}
+.blucro{display:flex;justify-content:space-between;align-items:baseline;gap:8px;border-top:1px solid var(--line);padding-top:10px}
+.blucro b{font-size:1.3rem;color:var(--primary);font-variant-numeric:tabular-nums}
+.bcard .btn{align-self:flex-start}
+.tipsbox{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+.tipsbox h4{margin:0 0 8px;font-size:.95rem}
+.tipsbox ul{margin:0;padding-left:18px;font-size:.9rem}
+.tipsbox li{margin-bottom:6px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-size:.9rem;z-index:20}
+.confirm{background:var(--soft);border-radius:10px;padding:12px 14px;margin-top:12px;font-size:.9rem;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+@media (prefers-reduced-motion:no-preference){.bar i,.prog i,.capbar i{transition:width .4s ease}}
+</style>
+</head>
+<body>
+
+
+<header>
+  <div class="wrap">
+    <div class="brand">
+      <h1 class="logo"><svg width="44" height="44" viewBox="0 0 120 120" aria-hidden="true"><path d="M16 62 L60 20" fill="none" stroke="var(--primary)" stroke-width="11" stroke-linecap="round"></path><path d="M60 20 L104 62" fill="none" stroke="var(--accent)" stroke-width="11" stroke-linecap="round"></path><circle cx="60" cy="92" r="17" fill="var(--accent)"></circle><path d="M60 75 C60 66 60 60 60 52" fill="none" stroke="var(--primary)" stroke-width="4.5" stroke-linecap="round"></path><path d="M60 60 C51 60 44 54 43 45 C52 45 59 51 60 60 Z" fill="var(--primary)"></path><path d="M60 56 C68 56 75 50 76 41 C67 41 61 47 60 56 Z" fill="var(--primary)"></path></svg><span>Mordomia <b>a Dois</b></span></h1>
+      <a class="back" href="index.html">← Voltar ao Somos Um</a>
+    </div>
+    <nav role="tablist" aria-label="Etapas">
+      <button role="tab" data-tab="diag" aria-selected="true">1. Diagnóstico</button>
+      <button role="tab" data-tab="trilha" aria-selected="false">2. Nossa trilha</button>
+      <button role="tab" data-tab="sonhos" aria-selected="false">3. Nossos sonhos</button>
+      <button role="tab" data-tab="decisoes" aria-selected="false">4. Pequenas decisões</button>
+      <button role="tab" data-tab="invest" aria-selected="false">5. Onde investir</button>
+      <button role="tab" data-tab="compra" aria-selected="false">6. Decidir uma compra</button>
+      <button role="tab" data-tab="renda" aria-selected="false">7. Aumentar a renda</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ============ DIAGNÓSTICO ============ -->
+<section id="diag" data-panel>
+  <h2>Como está a casa de vocês hoje?</h2>
+  <p class="lead">Sentem juntos, com o extrato do mês em mãos, e preencham os números do casal. O resultado aparece ao lado na hora. Não há resposta certa ou errada: o objetivo é enxergar a realidade e decidir juntos o próximo passo.</p>
+  <p class="verse">“Com sabedoria se edifica a casa, e com entendimento ela se firma.”<span>Provérbios 24.3</span></p>
+
+  <div class="example" id="exampleBar" hidden>
+    <span><strong>Números de exemplo.</strong> Eles mostram como a ferramenta funciona. Troquem pelos de vocês.</span>
+    <button class="btn small ghost" id="btnClear">Começar do zero</button>
+  </div>
+
+  <div class="grid2">
+    <div>
+      <fieldset>
+        <legend>Quanto entra por mês</legend>
+        <p class="hint">Valores líquidos, depois dos descontos.</p>
+        <div class="row"><label for="r1">Renda dele</label><div class="money"><input type="number" id="r1" min="0" step="50" inputmode="decimal"></div></div>
+        <div class="row"><label for="r2">Renda dela</label><div class="money"><input type="number" id="r2" min="0" step="50" inputmode="decimal"></div></div>
+        <div class="row"><label for="r3">Outras rendas<em>bicos, aluguel, pensão</em></label><div class="money"><input type="number" id="r3" min="0" step="50" inputmode="decimal"></div></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Para onde vai o dinheiro</legend>
+        <p class="hint">Média mensal. Sem as parcelas de dívidas (elas vêm no próximo bloco).</p>
+        <div class="row"><label for="g_dizimo">Dízimos e ofertas</label><div class="money"><input type="number" id="g_dizimo" min="0" step="10"></div></div>
+        <div class="row"><label for="g_moradia">Moradia<em>aluguel, condomínio, água, luz, gás, internet</em></label><div class="money"><input type="number" id="g_moradia" min="0" step="10"></div></div>
+        <div class="row"><label for="g_alim">Alimentação<em>mercado, feira, padaria</em></label><div class="money"><input type="number" id="g_alim" min="0" step="10"></div></div>
+        <div class="row"><label for="g_transp">Transporte<em>combustível, ônibus, manutenção</em></label><div class="money"><input type="number" id="g_transp" min="0" step="10"></div></div>
+        <div class="row"><label for="g_saude">Saúde<em>plano, farmácia, consultas</em></label><div class="money"><input type="number" id="g_saude" min="0" step="10"></div></div>
+        <div class="row"><label for="g_edu">Educação e filhos</label><div class="money"><input type="number" id="g_edu" min="0" step="10"></div></div>
+        <div class="row"><label for="g_lazer">Lazer e delivery<em>passeios, lanches, streaming</em></label><div class="money"><input type="number" id="g_lazer" min="0" step="10"></div></div>
+        <div class="row"><label for="g_outros">Outros<em>roupas, presentes, celular, imprevistos</em></label><div class="money"><input type="number" id="g_outros" min="0" step="10"></div></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Dívidas, uma por uma</legend>
+        <p class="hint">Cartão, empréstimos, carnês, financiamentos. Os juros estão no contrato ou na fatura; rotativo do cartão costuma passar de 10% ao mês.</p>
+        <div id="debtList"></div>
+        <button class="btn small ghost" id="addDebt" type="button" style="margin-bottom:14px">+ Adicionar dívida</button>
+      </fieldset>
+
+      <fieldset>
+        <legend>O que já está guardado</legend>
+        <div class="row"><label for="p_reserva">Dinheiro guardado para emergências</label><div class="money"><input type="number" id="p_reserva" min="0" step="100"></div></div>
+        <div class="row"><label for="p_invest">Outros investimentos</label><div class="money"><input type="number" id="p_invest" min="0" step="100"></div></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Como o casal lida com o dinheiro</legend>
+        <p class="hint">Marquem só o que já é verdade hoje para os dois.</p>
+        <label class="check"><input type="checkbox" id="h1"> Conversamos sobre dinheiro pelo menos uma vez por mês, sem brigar.</label>
+        <label class="check"><input type="checkbox" id="h2"> Temos um orçamento escrito (papel, planilha ou app).</label>
+        <label class="check"><input type="checkbox" id="h3"> Os dois sabem quanto o outro ganha e quanto devemos.</label>
+        <label class="check"><input type="checkbox" id="h4"> Compras acima de um valor combinado só são feitas com acordo dos dois.</label>
+        <label class="check"><input type="checkbox" id="h5"> Temos sonhos e objetivos financeiros definidos juntos.</label>
+      </fieldset>
+    </div>
+
+    <aside class="panel sticky" aria-live="polite">
+      <h3>Resultado do diagnóstico</h3>
+      <div class="score">
+        <svg class="gauge" viewBox="0 0 120 120" aria-hidden="true">
+          <circle cx="60" cy="60" r="50" fill="none" stroke="var(--soft)" stroke-width="12"></circle>
+          <circle id="gArc" cx="60" cy="60" r="50" fill="none" stroke="var(--primary)" stroke-width="12" stroke-linecap="round" stroke-dasharray="0 400" transform="rotate(-90 60 60)"></circle>
+          <text id="gNum" x="60" y="66" text-anchor="middle" font-family="Young Serif, Georgia, serif" font-size="30" fill="var(--ink)">0</text>
+          <text x="60" y="84" text-anchor="middle" font-size="10" fill="var(--muted)">de 100</text>
+        </svg>
+        <div><div class="lvl" id="lvl">—</div><p id="lvlTxt"></p></div>
+      </div>
+      <div class="ind" id="indicators"></div>
+      <div class="sum">
+        <div>Entra<b id="sEntra">—</b></div>
+        <div>Sai<b id="sSai">—</b></div>
+        <div>Sobra<b id="sSobra">—</b></div>
+      </div>
+      <div class="tipsbox" id="tips"></div>
+      <div class="actions">
+        <button class="btn" data-go="trilha">Ver nossa trilha →</button>
+        <button class="btn ghost" id="btnCopy">Copiar resumo</button>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ============ TRILHA ============ -->
+<section id="trilha" data-panel hidden>
+  <h2>Nossa trilha, um passo de cada vez</h2>
+  <p class="lead">A ordem importa. Cada passo fica mais fácil quando o anterior está firme. O passo destacado é onde vocês estão agora, calculado a partir do diagnóstico.</p>
+  <p class="verse">“Os planos do diligente tendem à abundância; mas a pressa excessiva, à pobreza.”<span>Provérbios 21.5</span></p>
+  <ol class="trail" id="trail"></ol>
+
+  <div class="panel" id="plano" style="margin-top:8px">
+    <h3>Plano de quitação, dívida por dívida</h3>
+    <p class="hint" style="margin:0 0 14px">Paguem a parcela de todas e coloquem o dinheiro extra na primeira da fila. Quando ela acabar, a parcela dela vai para a próxima.</p>
+    <div class="ratebox" style="margin-bottom:12px">
+      <label for="method">Método:</label>
+      <select id="method">
+        <option value="neve">Bola de neve (menor dívida primeiro)</option>
+        <option value="avalanche">Avalanche (juros mais altos primeiro)</option>
+      </select>
+      <label for="extra">Extra por mês:</label>
+      <div class="money" style="width:140px"><input type="number" id="extra" min="0" step="50"></div>
+    </div>
+    <div style="overflow-x:auto"><table class="dt" id="debtPlan"></table></div>
+    <div class="decision" id="planCmp" style="margin-top:12px"></div>
+  </div>
+</section>
+
+<!-- ============ SONHOS ============ -->
+<section id="sonhos" data-panel hidden>
+  <h2>Nossos sonhos, com data marcada</h2>
+  <p class="lead">Escrevam o que querem conquistar juntos, quanto custa e em quantos anos. A ferramenta mostra quanto separar por mês e se isso cabe no que sobra hoje.</p>
+  <p class="verse">“Escreve a visão e torna-a bem legível.”<span>Habacuque 2.2</span></p>
+
+  <div class="panel cap">
+    <h3>Cabe no orçamento?</h3>
+    <div class="capbar" id="capbar"></div>
+    <div id="capTxt" style="font-size:.92rem"></div>
+  </div>
+
+  <div class="ratebox">
+    <label for="rate">Onde o dinheiro vai ficar guardado:</label>
+    <select id="rate">
+      <option value="0.5">Poupança (cerca de 0,5% ao mês)</option>
+      <option value="0.8" selected>Tesouro Selic ou CDB de liquidez (cerca de 0,8% ao mês)</option>
+      <option value="0">Guardado sem render (0%)</option>
+    </select>
+  </div>
+
+  <div class="dreams" id="dreams"></div>
+</section>
+
+<!-- ============ PEQUENAS DECISÕES ============ -->
+<section id="decisoes" data-panel hidden>
+  <h2>Pequenas decisões, grandes resultados</h2>
+  <p class="lead">Marquem as mudanças que o casal topa fazer a partir deste mês. Ajustem os valores à realidade de vocês e vejam o que esse dinheiro vira com o tempo.</p>
+  <p class="verse">“Quem é fiel no pouco também é fiel no muito.”<span>Lucas 16.10</span></p>
+
+  <div class="grid2">
+    <div class="panel" id="choices"></div>
+    <aside class="panel sticky">
+      <h3>Juntos, vocês liberam por mês</h3>
+      <div class="result-num" id="libera">R$ 0</div>
+      <p class="hint" style="margin:6px 0 0">Guardado no Tesouro Selic ou CDB (cerca de 0,8% ao mês), isso vira:</p>
+      <svg class="chart" id="chart" viewBox="0 0 360 200" role="img" aria-label="Crescimento do valor guardado em 1, 3, 5 e 10 anos"></svg>
+      <div id="dreamHit" class="decision" style="margin-top:14px"></div>
+      <div class="actions"><button class="btn" id="btnApply">Somar isso à nossa sobra</button></div>
+      <p class="hint" id="applyTxt" style="margin-top:8px"></p>
+    </aside>
+  </div>
+</section>
+
+<!-- ============ INVESTIMENTOS ============ -->
+<section id="invest" data-panel hidden>
+  <h2>Onde fazer o dinheiro crescer</h2>
+  <p class="lead">Comparem as aplicações mais comuns com o mesmo valor e o mesmo prazo. Renda fixa tem caminho previsível; dólar e ações oscilam, por isso aparecem com uma faixa entre o cenário ruim e o bom.</p>
+  <p class="verse">“Ao que tinha recebido cinco talentos, disse o senhor: bem está, servo bom e fiel.”<span>Mateus 25.21</span></p>
+
+  <div class="panel" style="margin-bottom:18px">
+    <div class="ivars">
+      <label for="iv_ini">Valor para começar<div class="money"><input type="number" id="iv_ini" min="0" step="100"></div></label>
+      <label for="iv_mes">Aporte por mês<div class="money"><input type="number" id="iv_mes" min="0" step="50"></div></label>
+      <label for="iv_anos">Prazo em anos<input type="number" id="iv_anos" min="1" max="40" step="1"></label>
+    </div>
+    <div class="legend" id="ivLegend"></div>
+    <div style="overflow-x:auto"><svg class="ichart" id="ivChart" viewBox="0 0 720 340" role="img" aria-label="Projeção do valor acumulado em cada aplicação"></svg></div>
+    <p class="hint" style="margin:6px 0 0">Valores líquidos de Imposto de Renda, em reais de hoje sem descontar a inflação. A faixa clara mostra entre o cenário ruim e o bom.</p>
+  </div>
+
+  <div class="panel" style="margin-bottom:18px">
+    <h3>Comparativo no fim do prazo</h3>
+    <div style="overflow-x:auto"><table class="dt" id="ivTable"></table></div>
+  </div>
+
+  <details class="panel prem">
+    <summary>Taxas usadas no cálculo (podem ser ajustadas)</summary>
+    <p class="hint" style="margin:10px 0 14px">Referência de outubro de 2026: Selic em 13,75% ao ano, IPCA de 4,58% em 12 meses (até setembro) e Tesouro IPCA+ 2032 pagando cerca de IPCA + 6,8%. Para dólar e ações, os números são cenários ilustrativos, não previsões.</p>
+    <div class="premgrid" id="premGrid"></div>
+    <button class="btn small ghost" id="premReset" type="button" style="margin-top:12px">Voltar às taxas de referência</button>
+  </details>
+</section>
+
+<!-- ============ DECIDIR UMA COMPRA ============ -->
+<section id="compra" data-panel hidden>
+  <h2>Vale a pena comprar agora?</h2>
+  <p class="lead">Antes de uma decisão grande, sentem juntos e façam as contas aqui. A ferramenta usa os números do diagnóstico para dizer se a compra cabe, quanto ela custa de verdade e se compensa esperar e comprar à vista.</p>
+  <p class="verse">“Qual de vós, querendo edificar uma torre, não se assenta primeiro a calcular as despesas?”<span>Lucas 14.28</span></p>
+
+  <div class="tipos" role="radiogroup" aria-label="O que vocês querem comprar" id="tipos"></div>
+
+  <div class="grid2">
+    <div>
+      <fieldset>
+        <legend id="cpLegend">Os números da compra</legend>
+        <div class="row"><label for="cp_valor" id="lbValor">Valor do bem</label><div class="money"><input type="number" id="cp_valor" min="0" step="1000"></div></div>
+        <div class="row"><label for="cp_entrada">Quanto já têm para dar de entrada<em>sem mexer na reserva de emergência</em></label><div class="money"><input type="number" id="cp_entrada" min="0" step="500"></div></div>
+        <div class="row"><label for="cp_taxa">Juros do financiamento (% ao mês)<em id="hintTaxa"></em></label><input type="number" id="cp_taxa" min="0" step="0.05"></div>
+        <div class="row"><label for="cp_prazo">Número de parcelas</label><input type="number" id="cp_prazo" min="1" step="1"></div>
+        <div class="row"><label for="cp_custos" id="lbCustos">Custos mensais de manter</label><div class="money"><input type="number" id="cp_custos" min="0" step="50"></div></div>
+        <div class="row" id="rowAluguel"><label for="cp_aluguel">Aluguel que pagam hoje<em>deixa de existir com a casa própria</em></label><div class="money"><input type="number" id="cp_aluguel" min="0" step="50"></div></div>
+        <div id="rowEmpresa">
+          <div class="row"><label for="cp_fixo">Custo fixo mensal da empresa<em>aluguel do ponto, salários, contador, sistemas</em></label><div class="money"><input type="number" id="cp_fixo" min="0" step="100"></div></div>
+          <div class="row"><label for="cp_fat">Faturamento esperado por mês</label><div class="money"><input type="number" id="cp_fat" min="0" step="100"></div></div>
+          <div class="row"><label for="cp_margem">Margem de lucro bruta (%)<em>o que sobra de cada venda depois do custo do produto</em></label><input type="number" id="cp_margem" min="0" max="100" step="1"></div>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Perguntas antes de decidir</legend>
+        <p class="hint">Marquem só o que for verdade para os dois.</p>
+        <div id="cpChecks"></div>
+      </fieldset>
+    </div>
+
+    <aside class="panel sticky" aria-live="polite">
+      <div class="verdict" id="verdict"></div>
+      <div id="cpResult"></div>
+    </aside>
+  </div>
+</section>
+
+<!-- ============ AUMENTAR A RENDA ============ -->
+<section id="renda" data-panel hidden>
+  <h2>Mais renda, sem largar a família</h2>
+  <p class="lead">Cortar gastos tem limite; aumentar a renda, não. Aqui estão caminhos práticos para o casal ganhar mais, incluindo negócios que dá para tocar em casa, com poucas horas por dia.</p>
+  <p class="verse">“Em todo trabalho há proveito.”<span>Provérbios 14.23</span></p>
+
+  <div class="tips">
+    <div class="tip"><h3>Comecem pequeno</h3><p>Vendam primeiro para amigos, vizinhos e colegas de trabalho. Só comprem equipamento depois que as encomendas aparecerem.</p></div>
+    <div class="tip"><h3>Calculem o preço certo</h3><p>Preço = custo do material + o valor da sua hora + o lucro. Quem cobra só o material trabalha de graça.</p></div>
+    <div class="tip"><h3>Separem as contas</h3><p>Abram uma conta só para o negócio. Paguem um valor fixo para a casa e deixem o resto para repor material e crescer.</p></div>
+    <div class="tip"><h3>Formalizem como MEI</h3><p>Quando as vendas ficarem regulares, abram um MEI pelo portal do governo. Vocês ganham CNPJ, emitem nota e contribuem para o INSS.</p></div>
+    <div class="tip"><h3>Divulguem de graça</h3><p>WhatsApp Business com catálogo, Instagram com fotos boas e luz natural, e um pedido simples para cada cliente satisfeito indicar alguém.</p></div>
+    <div class="tip"><h3>Protejam o casamento</h3><p>Combinem horários, quem faz o quê e os dias sem trabalho. Renda extra não pode tomar o lugar da família, do descanso e da igreja.</p></div>
+  </div>
+
+  <div class="panel" style="margin:18px 0">
+    <h3>Outros caminhos além de abrir um negócio</h3>
+    <ul class="flags" style="margin:0">
+      <li><b>Vender o que não usam:</b> roupas, móveis e eletrônicos parados viram dinheiro rápido em brechós e sites de usados.</li>
+      <li><b>Crescer no emprego atual:</b> anotem resultados e entregas, e peçam conversa sobre aumento ou promoção com esses dados em mãos.</li>
+      <li><b>Qualificação:</b> cursos curtos e gratuitos (Sebrae, Senai, Senac e plataformas online) abrem portas para funções que pagam mais.</li>
+      <li><b>Hora extra com propósito:</b> se fizerem trabalho extra, decidam antes para onde vai o dinheiro: quitar uma dívida ou um sonho específico.</li>
+    </ul>
+  </div>
+
+  <h3 style="font-family:var(--display);font-weight:400;font-size:1.35rem;margin:26px 0 6px">Negócios para fazer em casa</h3>
+  <p class="hint" style="margin:0 0 14px">Os valores são exemplos para começar a conta. Pesquisem os preços da sua cidade e troquem pelos de vocês: o lucro do mês muda na hora.</p>
+  <div class="tipos" id="rFiltro" role="radiogroup" aria-label="Tipo de negócio"></div>
+  <div class="biz" id="bizList"></div>
+</section>
+
+<p class="note">Ferramenta educativa do Curso de Casais. Os cálculos são aproximados e simplificados, as taxas mudam com o tempo e nada aqui é recomendação de investimento; não substituem a orientação de um profissional. Os dados ficam salvos só neste aparelho e neste navegador; nada é enviado para ninguém.</p>
+</main>
+
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function(){
+const KEY='mordomia-a-dois-v1';
+const brl=v=>(v<0?'−':'')+'R$ '+Math.abs(Math.round(v)).toLocaleString('pt-BR');
+const pct=v=>(Math.round(v*10)/10).toLocaleString('pt-BR')+'%';
+const $=id=>document.getElementById(id);
+const numIds=['r1','r2','r3','g_dizimo','g_moradia','g_alim','g_transp','g_saude','g_edu','g_lazer','g_outros','p_reserva','p_invest'];
+const habIds=['h1','h2','h3','h4','h5'];
+
+const EXAMPLE={
+  example:true,
+  v:{r1:3200,r2:2400,r3:300,g_dizimo:590,g_moradia:1450,g_alim:1300,g_transp:520,g_saude:280,g_edu:350,g_lazer:480,g_outros:420,p_reserva:1500,p_invest:0},
+  debts:[
+    {name:'Cartão de crédito parcelado',bal:2400,pmt:300,rate:8},
+    {name:'Empréstimo pessoal',bal:5200,pmt:250,rate:3.5},
+    {name:'Carnê da loja de móveis',bal:1200,pmt:100,rate:2}
+  ],
+  method:'neve',extra:200,
+  h:{h1:true,h2:false,h3:true,h4:false,h5:false},
+  dreams:[
+    {name:'Reserva de emergência',goal:0,years:2,saved:1500,auto:true},
+    {name:'Viagem de 10 anos de casados',goal:8000,years:3,saved:0},
+    {name:'Entrada da casa própria',goal:40000,years:6,saved:0}
+  ],
+  choices:[
+    {t:'Um delivery a menos por semana',d:'cerca de 4 por mês',v:160,on:true},
+    {t:'Rever planos de celular e internet',d:'portabilidade ou plano menor',v:70,on:true},
+    {t:'Rever tarifas do banco e seguros',d:'conta sem tarifa, seguros que não usam',v:60,on:false},
+    {t:'Carona ou ônibus duas vezes por semana',d:'menos combustível e estacionamento',v:80,on:false},
+    {t:'Cancelar um streaming que quase não usam',d:'',v:45,on:false},
+    {t:'Lista de mercado e compras uma vez por semana',d:'evita as idas de “só um pãozinho”',v:150,on:false},
+    {t:'Esperar 7 dias antes de compras por impulso',d:'roupas, eletrônicos, ofertas',v:120,on:false},
+    {t:'Levar marmita 2 vezes por semana',d:'',v:90,on:false}
+  ],
+  rate:'0.8',applied:0
+};
+const EMPTY={example:false,v:Object.fromEntries(numIds.map(k=>[k,0])),h:Object.fromEntries(habIds.map(k=>[k,false])),
+  dreams:[{name:'Reserva de emergência',goal:0,years:2,saved:0,auto:true}],
+  debts:[],method:'neve',extra:null,
+  choices:EXAMPLE.choices.map(c=>({...c,on:false})),rate:'0.8',applied:0};
+
+let S;
+try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){S=null}
+if(!S||!S.v)S=JSON.parse(JSON.stringify(EXAMPLE));
+if(!Array.isArray(S.debts)){ // versão anterior guardava só o total
+  S.debts=(S.v.d_total>0)?[{name:'Dívidas (total)',bal:S.v.d_total,pmt:S.v.d_parc||0,rate:S.v.d_juros||0}]:[];
+  S.method='neve';S.extra=null;
+}
+function syncDebts(){
+  const d=S.debts.filter(x=>x.bal>0);
+  S.v.d_total=d.reduce((a,x)=>a+x.bal,0);
+  S.v.d_parc=S.debts.reduce((a,x)=>a+(x.bal>0?x.pmt:0),0);
+  S.v.d_juros=S.v.d_total>0?d.reduce((a,x)=>a+x.bal*x.rate,0)/S.v.d_total:0;
+}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+
+/* ---------- abas ---------- */
+const tabs=[...document.querySelectorAll('nav button')];
+function show(id){
+  tabs.forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===id));
+  document.querySelectorAll('[data-panel]').forEach(p=>p.hidden=p.id!==id);
+  try{history.replaceState(null,'','#'+id)}catch(e){}
+  window.scrollTo({top:0});
+  renderAll();
+}
+tabs.forEach(b=>b.addEventListener('click',()=>show(b.dataset.tab)));
+document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>show(b.dataset.go)));
+
+/* ---------- cálculo ---------- */
+function calc(){
+  syncDebts();
+  const v=S.v;
+  const entra=v.r1+v.r2+v.r3;
+  const gastos=v.g_dizimo+v.g_moradia+v.g_alim+v.g_transp+v.g_saude+v.g_edu+v.g_lazer+v.g_outros;
+  const sai=gastos+v.d_parc;
+  const sobra=entra-sai;
+  const essenciais=gastos-v.g_lazer-v.g_dizimo;
+  const poup=entra>0?sobra/entra*100:0;
+  const divR=entra>0?v.d_parc/entra*100:0;
+  const meses=sai>0?v.p_reserva/sai:0;
+  const habs=habIds.filter(k=>S.h[k]).length;
+  const giv=entra>0?v.g_dizimo/entra*100:0;
+
+  const sPoup=poup>=20?25:poup>=10?19:poup>=5?13:poup>0?7:0;
+  const sDiv=v.d_total<=0&&v.d_parc<=0?20:divR<=10?16:divR<=20?11:divR<=30?6:0;
+  const sRes=meses>=6?20:meses>=3?15:meses>=1?9:meses>0?4:0;
+  const sHab=habs*5;
+  const sGiv=giv>=10?10:giv>0?6:0;
+  const score=entra>0?sPoup+sDiv+sRes+sHab+sGiv:0;
+  return {entra,gastos,sai,sobra,essenciais,poup,divR,meses,habs,giv,sPoup,sDiv,sRes,sHab,sGiv,score};
+}
+function level(s){
+  if(s>=85)return['Casa firme','good','Vocês têm base sólida. Agora é multiplicar, investir nos sonhos e ser generosos.'];
+  if(s>=65)return['No caminho certo','good','Boa estrutura. Alguns ajustes vão dar mais tranquilidade e acelerar os sonhos.'];
+  if(s>=45)return['Atenção','warn','O mês fecha, mas com pouca margem. Um imprevisto pode desequilibrar a casa.'];
+  if(s>=25)return['Alerta','bad','O dinheiro está apertado. Hora de sentar juntos e reorganizar as prioridades.'];
+  return['Emergência','bad','As contas não fecham. O primeiro passo é parar de criar dívidas novas e conversar.'];
+}
+function tone(score,max){const r=score/max;return r>=.7?'good':r>=.4?'warn':'bad'}
+
+function monthsToPay(D,P,r){
+  if(D<=0)return 0; if(P<=0)return Infinity;
+  if(r<=0)return Math.ceil(D/P);
+  const i=r/100; if(P<=D*i)return Infinity;
+  return Math.ceil(-Math.log(1-i*D/P)/Math.log(1+i));
+}
+function fv(pv,pmt,i,n){if(i===0)return pv+pmt*n;const f=Math.pow(1+i,n);return pv*f+pmt*(f-1)/i}
+function pmtNeeded(goal,pv,i,n){if(n<=0)return Math.max(0,goal-pv);if(i===0)return Math.max(0,(goal-pv)/n);const f=Math.pow(1+i,n);return Math.max(0,(goal-pv*f)*i/(f-1))}
+function monthsTo(goal,pv,pmt,i){if(pv>=goal)return 0;for(let m=1;m<=720;m++){if(fv(pv,pmt,i,m)>=goal)return m}return Infinity}
+function tempo(m){
+  if(!isFinite(m))return'muito tempo (mais de 60 anos)';
+  if(m===0)return'já alcançado';
+  const a=Math.floor(m/12),r=m%12;
+  return [a?a+(a>1?' anos':' ano'):'',r?r+(r>1?' meses':' mês'):''].filter(Boolean).join(' e ');
+}
+
+/* ---------- diagnóstico ---------- */
+function bindDiag(){
+  numIds.forEach(k=>{const el=$(k);el.value=S.v[k]||'';el.addEventListener('input',()=>{S.v[k]=parseFloat(el.value)||0;S.example=false;save();renderDiag()})});
+  habIds.forEach(k=>{const el=$(k);el.checked=!!S.h[k];el.addEventListener('change',()=>{S.h[k]=el.checked;S.example=false;save();renderDiag()})});
+}
+const TIPS={
+  poup:['Façam lista de compras e cumpram: comprar sem lista é comprar por impulso.','Cancelem assinaturas e serviços que quase não usam; revisem todos de uma vez.','Pesquisem e negociem planos de celular, internet e TV uma vez por ano.','Antes de qualquer compra fora do plano, esperem 24 horas.','Refeições em casa com mais frequência: lanches e delivery são ralos silenciosos do orçamento.'],
+  div:['Paguem primeiro a dívida mais cara (ou a menor, para ganhar ânimo): o plano está na aba Nossa trilha.','Não façam empréstimo novo para pagar dívida antiga, a não ser que os juros sejam bem menores.','Liguem para o banco ou a loja e peçam desconto para quitar: negociar é um direito.','Todo dinheiro extra (13º, restituição, bônus) vai direto para a dívida mais cara.','Fiquem com um cartão só e paguem sempre a fatura inteira.'],
+  res:['Comecem pequeno: um valor fixo transferido no dia do salário, antes de gastar.','Guardem a reserva numa conta separada, longe do cartão de débito.','Um cofrinho para moedas e trocados ajuda a criar o hábito de guardar.'],
+  hab:['Além da reunião mensal, façam uma revisão financeira a cada três meses.','Juntem numa pasta os documentos de bens, contratos e dívidas da casa.','Escrevam juntos a lista do que realmente importa para a família; ela ajuda a dizer não.','Nenhuma dívida escondida: contem tudo um ao outro, mesmo o que envergonha.'],
+  giv:['Separem a semente assim que o dinheiro entra, antes de qualquer outro gasto.','Comecem cada reunião financeira agradecendo a Deus pela provisão do mês.']
+};
+function renderTips(c){
+  if(c.entra<=0){$('tips').innerHTML='';return}
+  const areas=[['poup',c.sPoup/25],['div',c.sDiv/20],['res',c.sRes/20],['hab',c.sHab/25],['giv',c.sGiv/10]].sort((a,b)=>a[1]-b[1]);
+  if(areas[0][1]>=0.9){$('tips').innerHTML='<h4>Dica para vocês agora</h4><ul><li>A casa está firme. Que tal ensinar outro casal? Generosidade e legado são o último passo da trilha.</li></ul>';return}
+  const w=Math.floor(Date.now()/6048e5);
+  const pick=(k,n)=>{const l=TIPS[k];return l.at((w+n)%l.length)};
+  const list=[pick(areas[0][0],0),pick(areas[0][0],1),pick(areas[1][0],0)];
+  $('tips').innerHTML='<h4>Três dicas para vocês agora</h4><ul>'+list.map(t=>'<li>'+t+'</li>').join('')+'</ul>';
+}
+function renderDiag(){
+  $('exampleBar').hidden=!S.example;
+  const c=calc(), L=level(c.score);
+  const C=2*Math.PI*50;
+  $('gArc').setAttribute('stroke-dasharray',(C*c.score/100)+' '+C);
+  $('gArc').setAttribute('stroke',L[1]==='good'?'var(--good)':L[1]==='warn'?'var(--warn)':'var(--bad)');
+  $('gNum').textContent=c.score;
+  $('lvl').textContent=L[0];$('lvl').className='lvl '+L[1];
+  $('lvlTxt').textContent=c.entra>0?L[2]:'Preencham a renda para ver o resultado.';
+  const items=[
+    ['Quanto sobra no mês',c.sobra>=0?pct(c.poup)+' da renda':'falta '+brl(-c.sobra),c.sPoup,25,'Meta: guardar pelo menos 10% da renda'],
+    ['Peso das dívidas',v=>v,c.sDiv,20,''],
+    ['Reserva para emergências',(Math.round(c.meses*10)/10).toLocaleString('pt-BR')+' mês(es)',c.sRes,20,'Meta: 6 meses do custo da casa'],
+    ['Diálogo e acordos do casal',c.habs+' de 5',c.sHab,25,''],
+    ['Generosidade',c.giv>0?pct(c.giv)+' da renda':'nenhum valor',c.sGiv,10,'']
+  ];
+  items[1][1]=S.v.d_total>0||S.v.d_parc>0?pct(c.divR)+' da renda em parcelas':'sem dívidas';
+  items[1][4]='Ideal: parcelas abaixo de 20% da renda';
+  $('indicators').innerHTML=items.map(([t,val,s,m,h])=>{
+    const tn=tone(s,m);
+    return `<div class="ind-item"><span>${t}<br><small style="color:var(--muted)">${h}</small></span><b class="${tn}">${val}</b><div class="bar"><i class="bg-${tn}" style="width:${s/m*100}%"></i></div></div>`;
+  }).join('');
+  $('sEntra').textContent=brl(c.entra);$('sSai').textContent=brl(c.sai);
+  $('sSobra').textContent=brl(c.sobra);$('sSobra').className=c.sobra>=0?'good':'bad';
+  renderTips(c);
+}
+$('btnClear').addEventListener('click',()=>{
+  const keepInv=S.inv;
+  S=JSON.parse(JSON.stringify(EMPTY));S.inv=keepInv;S.compra={tipo:'carro',d:{}};S.renda={cat:'Todos',vals:{},added:{}};save();
+  numIds.forEach(k=>$(k).value='');habIds.forEach(k=>$(k).checked=false);
+  renderAll();toast('Campos limpos. Agora é com vocês!');
+});
+$('btnCopy').addEventListener('click',()=>{
+  const c=calc(),L=level(c.score);
+  const t=`Diagnóstico financeiro do casal\nNota: ${c.score}/100 (${L[0]})\nEntra: ${brl(c.entra)} | Sai: ${brl(c.sai)} | Sobra: ${brl(c.sobra)}\nParcelas de dívidas: ${pct(c.divR)} da renda\nReserva: ${(Math.round(c.meses*10)/10).toLocaleString('pt-BR')} mês(es)\nPróximo passo: ${currentStepTitle()}`;
+  const done=()=>toast('Resumo copiado.');
+  try{navigator.clipboard.writeText(t).then(done,()=>toast('Não foi possível copiar neste aparelho.'))}catch(e){toast('Não foi possível copiar neste aparelho.')}
+});
+
+/* ---------- trilha ---------- */
+function steps(){
+  const c=calc(),v=S.v;
+  const i=parseFloat(S.rate)/100;
+  const mPay=monthsToPay(v.d_total,v.d_parc,v.d_juros);
+  const mPayX=monthsToPay(v.d_total,v.d_parc+Math.max(0,c.sobra*.7),v.d_juros);
+  const umMes=c.sai, seis=c.sai*6;
+  const falta1=Math.max(0,umMes-v.p_reserva), falta6=Math.max(0,seis-v.p_reserva);
+  const dicaGuardar=Math.max(100,Math.round(c.entra*0.05/50)*50);
+  const sonhosMes=dreamTotals().need;
+  return [
+    {t:'Abrir os números e conversar',done:S.h.h1&&S.h.h2&&S.h.h3,
+     p:'Antes de qualquer meta, o casal precisa de transparência. Dinheiro escondido gera desconfiança.',
+     a:['Marquem uma “reunião do casal” fixa por mês, de 30 minutos, com oração no início.','Mostrem um ao outro extratos, faturas e dívidas, sem acusações.','Escrevam o orçamento do mês antes de o mês começar.'],
+     d:`Decisão simples: escolham hoje o dia da reunião mensal (por exemplo, todo primeiro domingo à noite).`},
+    {t:'Gastar menos do que ganham',done:c.sobra>0&&c.entra>0,
+     p:'Se o mês fecha no vermelho, todo o resto fica impossível. A meta é sobrar pelo menos 10%.',
+     a:['Anotem todo gasto por 30 dias (pode ser no bloco de notas do celular).','Separem o essencial (moradia, comida, saúde) do que pode esperar.','Cortem primeiro o que não muda a vida de vocês: assinaturas esquecidas, taxas, delivery.','Procurem os cinco buracos do orçamento: pequenos gastos diários, apostas e loterias, juros de dívidas, desperdício e compras para impressionar os outros.'],
+     d:c.sobra<0?`Hoje falta <b>${brl(-c.sobra)}</b> por mês. Vejam a aba “Pequenas decisões” para achar esse valor.`:`Hoje sobra <b>${brl(c.sobra)}</b> por mês (${pct(c.poup)} da renda). ${c.poup<10?'Busquem chegar a '+brl(c.entra*.1)+'.':'Ótimo, mantenham.'}`},
+    {t:'Mini reserva: 1 mês de custo da casa',done:c.sai>0&&v.p_reserva>=umMes,
+     p:'Um colchão pequeno impede que um pneu furado ou um remédio virem dívida no cartão.',
+     a:['Abram uma conta separada só para emergências, longe do cartão de débito do dia a dia.','Programem uma transferência automática no dia do salário.','Combinem juntos o que é emergência de verdade.'],
+     d:falta1>0?`Faltam <b>${brl(falta1)}</b>. Guardando ${brl(dicaGuardar)} por mês, chegam lá em <b>${tempo(Math.ceil(falta1/dicaGuardar))}</b>.`:`Meta atingida: ${brl(v.p_reserva)} guardados.`},
+    {t:'Sair das dívidas',done:v.d_total<=0,
+     p:'Juros trabalham contra o casal todos os dias. Quitar dívida cara é o investimento com o melhor retorno que existe.',
+     a:['Listem todas as dívidas, da menor para a maior.','Paguem o mínimo de todas e coloquem toda sobra na menor (método bola de neve).','Troquem dívidas caras (cartão, cheque especial) por um crédito mais barato, se possível.','Não façam dívidas novas durante esse passo.'],
+     d:v.d_total<=0?'Sem dívidas. Glória a Deus!':
+       (isFinite(mPay)?`No ritmo atual, quitam em <b>${tempo(mPay)}</b>.`:'No ritmo atual, a parcela não cobre nem os juros. É urgente renegociar.')+
+       (c.sobra>0&&isFinite(mPayX)?` Colocando 70% da sobra (${brl(c.sobra*.7)}) nas dívidas, quitam em <b>${tempo(mPayX)}</b>.`:'')+
+       ` <a href="#plano" style="color:var(--primary);font-weight:600">Ver a ordem, dívida por dívida ↓</a>`},
+    {t:'Reserva completa: 6 meses',done:c.sai>0&&v.p_reserva>=seis,
+     p:'Com seis meses de custo guardados, uma demissão ou doença não derruba a casa.',
+     a:['Deixem a reserva no Tesouro Selic ou em CDB com liquidez diária.','Usem a sobra que antes ia para as dívidas.','Só usem para emergência real, e reponham depois.'],
+     d:falta6>0?`Meta: <b>${brl(seis)}</b>. Faltam ${brl(falta6)}. ${c.sobra>0?'Com a sobra atual, levam <b>'+tempo(monthsTo(seis,v.p_reserva,c.sobra,i))+'</b>.':''}`:`Meta atingida.`},
+    {t:'Investir nos sonhos',done:S.dreams.some(d=>!d.auto&&d.goal>0)&&c.sobra>=sonhosMes&&sonhosMes>0,
+     p:'Agora a sobra tem destino: casa própria, estudos dos filhos, viagens, aposentadoria.',
+     a:['Escrevam os sonhos com valor e prazo na aba “Nossos sonhos”.','Separem uma conta ou investimento para cada sonho.','Revisem juntos a cada seis meses.'],
+     d:`Os sonhos cadastrados pedem <b>${brl(sonhosMes)}</b> por mês. ${c.sobra>=sonhosMes?'Cabe na sobra atual.':'Hoje a sobra é '+brl(Math.max(0,c.sobra))+'. Ajustem prazos ou liberem mais com pequenas decisões.'}`},
+    {t:'Generosidade e legado',done:c.giv>=10&&c.score>=85,
+     p:'O alvo final não é acumular, é ter liberdade para servir, abençoar e deixar herança aos filhos.',
+     a:['Mantenham a fidelidade nos dízimos e ofertas.','Separem um valor para ajudar pessoas e a obra missionária.','Planejem a aposentadoria e conversem sobre o que querem deixar.'],
+     d:`Hoje vocês devolvem ${c.giv>0?pct(c.giv)+' da renda':'ainda nenhum valor registrado'}. “Há mais felicidade em dar do que em receber” (Atos 20.35).`}
+  ];
+}
+function currentStepTitle(){const s=steps();const n=s.find(x=>!x.done);return n?n.t:'Manter e multiplicar'}
+function renderTrail(){
+  const s=steps(); let cur=s.findIndex(x=>!x.done); if(cur<0)cur=s.length;
+  $('trail').innerHTML=s.map((x,i)=>{
+    const st=x.done?'done':i===cur?'now':'later';
+    const pill=x.done?'<span class="pill good">Concluído</span>':i===cur?'<span class="pill warn">Estamos aqui</span>':'<span class="pill" style="color:var(--muted)">Próximo</span>';
+    const body=st==='later'?`<p>${x.p}</p>`:`<p>${x.p}</p><ul>${x.a.map(a=>`<li>${a}</li>`).join('')}</ul><div class="decision">${x.d}</div>`;
+    return `<li class="step ${st}"><div class="dot">${x.done?'✓':i+1}</div><div class="card"><div class="top"><h3>${x.t}</h3>${pill}</div>${body}</div></li>`;
+  }).join('');
+}
+
+/* ---------- dívidas, uma por uma ---------- */
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+function renderDebts(){
+  $('debtList').innerHTML=S.debts.length?S.debts.map((d,k)=>`
+    <div class="debt">
+      <label class="dn">Credor<input type="text" id="bn${k}" value="${esc(d.name)}"></label>
+      <label>Quanto falta (R$)<input type="number" id="bb${k}" min="0" step="100" value="${d.bal||''}"></label>
+      <label>Parcela (R$)<input type="number" id="bp${k}" min="0" step="10" value="${d.pmt||''}"></label>
+      <label>Juros % a.m.<input type="number" id="br${k}" min="0" step="0.1" value="${d.rate||''}"></label>
+      <button class="x" type="button" data-rmdebt="${k}" aria-label="Remover ${esc(d.name)}">×</button>
+    </div>`).join(''):'<p class="hint" style="margin:0 0 8px">Nenhuma dívida cadastrada. Se vocês não devem nada, ótimo!</p>';
+  S.debts.forEach((d,k)=>{
+    const on=(id,f)=>$(id).addEventListener('input',e=>{f(e.target.value);S.example=false;save();renderDiag();renderPlan()});
+    on('bn'+k,v=>d.name=v);
+    on('bb'+k,v=>d.bal=parseFloat(v)||0);
+    on('bp'+k,v=>d.pmt=parseFloat(v)||0);
+    on('br'+k,v=>d.rate=parseFloat(v)||0);
+  });
+  document.querySelectorAll('[data-rmdebt]').forEach(b=>b.addEventListener('click',()=>{S.debts.splice(+b.dataset.rmdebt,1);save();renderDebts();renderDiag()}));
+}
+$('addDebt').addEventListener('click',()=>{
+  S.debts.push({name:'Nova dívida',bal:0,pmt:0,rate:0});save();renderDebts();
+  const k=S.debts.length-1;$('bn'+k).focus();$('bn'+k).select();
+});
+function simulate(method,extra){
+  const ds=S.debts.filter(d=>d.bal>0).map(d=>({name:d.name,bal:d.bal,pmt:d.pmt,rate:d.rate,b:d.bal,month:null}));
+  const order=[...ds].sort(method==='avalanche'?(a,b)=>b.rate-a.rate||a.bal-b.bal:(a,b)=>a.bal-b.bal||b.rate-a.rate);
+  let m=0,juros=0;
+  while(ds.some(d=>d.b>0.01)&&m<600){
+    m++;let pool=extra;
+    ds.forEach(d=>{
+      if(d.b<=0.01){pool+=d.pmt;return}
+      const it=d.b*d.rate/100;d.b+=it;juros+=it;
+      const p=Math.min(d.pmt,d.b);d.b-=p;pool+=d.pmt-p;
+      if(d.b<=0.01&&d.month===null)d.month=m;
+    });
+    for(const d of order){if(pool<=0)break;if(d.b>0.01){const p=Math.min(pool,d.b);d.b-=p;pool-=p;if(d.b<=0.01&&d.month===null)d.month=m}}
+  }
+  const ok=!ds.some(d=>d.b>0.01);
+  return {order,months:ok?m:Infinity,juros};
+}
+function extraValue(){const c=calc();return S.extra==null?Math.max(0,Math.round(c.sobra*0.7/10)*10):S.extra}
+function renderPlan(){
+  $('method').value=S.method;
+  const ex=extraValue();
+  if(document.activeElement!==$('extra'))$('extra').value=ex||'';
+  if(!S.debts.some(d=>d.bal>0)){
+    $('debtPlan').innerHTML='<tr><td>Nenhuma dívida cadastrada no diagnóstico. Glória a Deus!</td></tr>';
+    $('planCmp').hidden=true;return;
+  }
+  $('planCmp').hidden=false;
+  const r=simulate(S.method,ex);
+  $('debtPlan').innerHTML='<thead><tr><th>Ordem</th><th>Dívida</th><th style="text-align:right">Falta</th><th style="text-align:right">Juros</th><th>Quitada em</th></tr></thead><tbody>'+
+    r.order.map((d,i)=>`<tr class="${i===0?'first':''}"><td><span class="ord">${i+1}</span></td><td>${esc(d.name)}${i===0?'<br><small class="warn">foco do dinheiro extra</small>':''}</td><td class="n">${brl(d.bal)}</td><td class="n">${(d.rate||0).toLocaleString('pt-BR')}%</td><td>${d.month?tempo(d.month):'não quita no ritmo atual'}</td></tr>`).join('')+'</tbody>';
+  const other=simulate(S.method==='neve'?'avalanche':'neve',ex);
+  const base=simulate(S.method,0);
+  const nomeOutro=S.method==='neve'?'avalanche':'bola de neve';
+  let t=isFinite(r.months)?`Com <b>${brl(ex)}</b> extras por mês, ficam livres de todas as dívidas em <b>${tempo(r.months)}</b>, pagando cerca de ${brl(r.juros)} de juros.`:
+    `Mesmo com ${brl(ex)} extras, alguma parcela não cobre os juros. Aumentem o extra ou renegociem a dívida mais cara.`;
+  if(isFinite(r.months)&&ex>0)t+=isFinite(base.months)?` Sem o extra, levariam ${tempo(base.months)} e pagariam ${brl(base.juros)} de juros.`:' Sem o extra, nunca terminariam.';
+  if(isFinite(r.months)&&isFinite(other.months)){
+    const dif=r.juros-other.juros;
+    t+=Math.abs(dif)<20?` O método ${nomeOutro} daria praticamente o mesmo resultado.`:dif>0?` O método ${nomeOutro} economizaria ${brl(dif)} em juros, com vitórias menos rápidas.`:` Esse método já é o que paga menos juros.`;
+  }
+  $('planCmp').innerHTML=t;
+}
+$('method').addEventListener('change',e=>{S.method=e.target.value;save();renderPlan()});
+$('extra').addEventListener('input',e=>{S.extra=e.target.value===''?null:Math.max(0,parseFloat(e.target.value)||0);save();renderPlan()});
+
+/* ---------- sonhos ---------- */
+function dreamGoal(d){return d.auto?calc().sai*6:d.goal}
+function dreamTotals(){
+  const i=parseFloat(S.rate)/100; let need=0;
+  S.dreams.forEach(d=>{need+=pmtNeeded(dreamGoal(d),d.saved,i,Math.round(d.years*12))});
+  return {need};
+}
+function renderDreams(){
+  $('rate').value=S.rate;
+  $('dreams').innerHTML=S.dreams.map((d,k)=>`
+    <article class="dream" data-k="${k}">
+      <input class="name" type="text" id="dn${k}" value="${d.name.replace(/"/g,'&quot;')}" aria-label="Nome do sonho" ${d.auto?'readonly':''}>
+      <div class="f">
+        <label>Quanto custa<input type="number" id="dg${k}" min="0" step="500" value="${d.auto?Math.round(dreamGoal(d)):d.goal||''}" ${d.auto?'readonly title="Calculado: 6 meses do custo da casa"':''}></label>
+        <label>Em quantos anos<input type="number" id="dy${k}" min="0.5" step="0.5" value="${d.years}"></label>
+        <label>Já guardado<input type="number" id="ds${k}" min="0" step="100" value="${d.saved||''}"></label>
+      </div>
+      <div class="prog"><i id="dp${k}"></i></div>
+      <div class="out" id="do${k}"></div>
+      ${d.auto?'':`<button class="rm" data-rm="${k}">Remover sonho</button>`}
+    </article>`).join('')+`<button class="adddream" id="addDream">+ Adicionar um sonho</button>`;
+  S.dreams.forEach((d,k)=>{
+    $('dn'+k).addEventListener('input',e=>{d.name=e.target.value;save()});
+    $('dg'+k).addEventListener('input',e=>{if(!d.auto){d.goal=parseFloat(e.target.value)||0;save();updDreams()}});
+    $('dy'+k).addEventListener('input',e=>{d.years=parseFloat(e.target.value)||0;save();updDreams()});
+    $('ds'+k).addEventListener('input',e=>{d.saved=parseFloat(e.target.value)||0;save();updDreams()});
+  });
+  document.querySelectorAll('[data-rm]').forEach(b=>b.addEventListener('click',()=>{S.dreams.splice(+b.dataset.rm,1);save();renderDreams()}));
+  $('addDream').addEventListener('click',()=>{S.dreams.push({name:'Novo sonho',goal:5000,years:2,saved:0});save();renderDreams();const k=S.dreams.length-1;$('dn'+k).focus();$('dn'+k).select()});
+  updDreams();
+}
+function updDreams(){
+  const c=calc(), i=parseFloat(S.rate)/100;
+  const n=S.dreams.length; const sobra=Math.max(0,c.sobra);
+  let total=0;
+  S.dreams.forEach((d,k)=>{
+    const goal=dreamGoal(d), m=Math.round(d.years*12);
+    const need=pmtNeeded(goal,d.saved,i,m); total+=need;
+    const prog=goal>0?Math.min(100,d.saved/goal*100):0;
+    $('dp'+k).style.width=prog+'%';
+    const share=n?sobra/n:0;
+    const mm=monthsTo(goal,d.saved,share,i);
+    const small=Math.max(50,Math.round(need*0.5/10)*10);
+    const mSmall=monthsTo(goal,d.saved,small,i);
+    $('do'+k).innerHTML= goal<=0?'<span class="muted">Informem quanto custa.</span>':
+      d.saved>=goal?'<span class="big good">Conquistado!</span>':
+      `<div><span class="muted">Guardar por mês</span><div class="big">${brl(need)}</div></div>
+       <div class="muted">${pct(prog)} já guardado. Meta: ${brl(goal)} em ${tempo(m)}.</div>
+       <div class="decision">${share>0?`Dividindo a sobra igualmente entre os sonhos (${brl(share)}/mês), chegam lá em <b>${tempo(mm)}</b>.`:`Começar pequeno também vale: com <b>${brl(small)}</b> por mês, chegam lá em <b>${tempo(mSmall)}</b>.`}</div>`;
+  });
+  const used=Math.min(total,sobra), over=Math.max(0,total-sobra);
+  const base=Math.max(total,sobra,1);
+  $('capbar').innerHTML=`<i class="bg-good" style="width:${used/base*100}%"></i><i class="bg-bad" style="width:${over/base*100}%"></i>`;
+  $('capTxt').innerHTML= c.entra<=0?'Preencham o diagnóstico para comparar com a sobra do mês.':
+    over>0?`Os sonhos pedem <b>${brl(total)}</b> por mês, mas sobra <b>${brl(sobra)}</b>. Faltam <b class="bad">${brl(over)}</b>: aumentem os prazos ou liberem dinheiro com pequenas decisões.`:
+    `Os sonhos pedem <b>${brl(total)}</b> por mês e sobra <b>${brl(sobra)}</b>. <span class="good">Cabe no orçamento</span>${sobra-total>0?', e ainda ficam '+brl(sobra-total)+' livres.':'.'}`;
+}
+$('rate').addEventListener('change',e=>{S.rate=e.target.value;save();updDreams()});
+
+/* ---------- pequenas decisões ---------- */
+function renderChoices(){
+  $('choices').innerHTML='<h3>O que o casal topa mudar</h3>'+S.choices.map((c,k)=>`
+    <div class="choice">
+      <input type="checkbox" id="cc${k}" ${c.on?'checked':''} aria-label="${c.t}">
+      <label for="cc${k}"><span>${c.t}${c.d?`<em>${c.d}</em>`:''}</span></label>
+      <div class="money"><input type="number" id="cv${k}" min="0" step="10" value="${c.v}" aria-label="Economia por mês"></div>
+    </div>`).join('');
+  S.choices.forEach((c,k)=>{
+    $('cc'+k).addEventListener('change',e=>{c.on=e.target.checked;save();updChoices()});
+    $('cv'+k).addEventListener('input',e=>{c.v=parseFloat(e.target.value)||0;save();updChoices()});
+  });
+  updChoices();
+}
+function updChoices(){
+  const m=S.choices.filter(c=>c.on).reduce((a,c)=>a+c.v,0);
+  $('libera').textContent=brl(m);
+  const i=0.008, yrs=[1,3,5,10];
+  const vals=yrs.map(y=>fv(0,m,i,y*12)), mx=Math.max(...vals,1);
+  const W=360,H=200,top=24,bot=30,bw=56,gap=(W-bw*4)/5;
+  $('chart').innerHTML=vals.map((v,k)=>{
+    const h=(H-top-bot)*v/mx, x=gap+k*(bw+gap), y=H-bot-h;
+    return `<rect x="${x}" y="${y}" width="${bw}" height="${Math.max(h,1)}" rx="4" fill="var(--primary)" opacity="${.45+k*.18}"></rect>
+      <text class="lbl" x="${x+bw/2}" y="${y-6}" text-anchor="middle">${brl(v)}</text>
+      <text x="${x+bw/2}" y="${H-10}" text-anchor="middle">${yrs[k]} ${yrs[k]>1?'anos':'ano'}</text>`;
+  }).join('')+`<line x1="0" x2="${W}" y1="${H-bot}" y2="${H-bot}" stroke="var(--line)"></line>`;
+  const d=S.dreams.find(x=>!x.auto&&x.goal>x.saved);
+  $('dreamHit').innerHTML=m<=0?'Marquem pelo menos uma decisão para ver o efeito.':
+    d?`Só com essas decisões, o sonho “<b>${d.name}</b>” (${brl(d.goal)}) fica pronto em <b>${tempo(monthsTo(d.goal,d.saved,m,i))}</b>.`:
+    `Em 10 anos, essas pequenas escolhas somam ${brl(vals[3])}.`;
+  $('applyTxt').textContent=S.applied?`Já somado à sobra: ${brl(S.applied)} por mês (abatido de lazer e outros gastos).`:'';
+}
+$('btnApply').addEventListener('click',()=>{
+  const m=S.choices.filter(c=>c.on).reduce((a,c)=>a+c.v,0);
+  const delta=m-(S.applied||0); if(!delta){toast('Nada novo para somar.');return}
+  // abate primeiro de lazer, depois de outros, depois de alimentação
+  let rest=delta;
+  for(const k of ['g_lazer','g_outros','g_alim']){
+    if(rest>0){const t=Math.min(S.v[k],rest);S.v[k]-=t;rest-=t}
+    else if(rest<0){S.v[k]+=-rest;rest=0}
+  }
+  S.applied=m-Math.max(0,rest);save();
+  numIds.forEach(k=>$(k).value=S.v[k]||'');
+  updChoices();toast('Pronto! O diagnóstico e a trilha foram atualizados.');
+});
+
+/* ---------- onde investir ---------- */
+const PREM0={selic:13.75,cdb:100,poup:8,ipca:4.5,real:6.8,dolB:4,dolP:-5,dolO:12,acB:11,acP:0,acO:20};
+const PREM_LBL={selic:'Selic (% ao ano)',cdb:'CDB: % do CDI',poup:'Poupança (% ao ano)',ipca:'Inflação esperada, IPCA (% ao ano)',real:'Tesouro IPCA+: juro acima da inflação (%)',dolB:'Dólar: cenário médio (% ao ano)',dolP:'Dólar: cenário ruim (% ao ano)',dolO:'Dólar: cenário bom (% ao ano)',acB:'Ações: cenário médio (% ao ano)',acP:'Ações: cenário ruim (% ao ano)',acO:'Ações: cenário bom (% ao ano)'};
+if(!S.inv)S.inv={ini:2000,mes:300,anos:5,p:{...PREM0}};
+const mRate=a=>Math.pow(1+a/100,1/12)-1;
+const irReg=m=>m<=6?22.5:m<=12?20:m<=24?17.5:15;
+function products(){
+  const p=S.inv.p;
+  return [
+    {n:'Poupança',c:'var(--c1)',a:p.poup,ir:()=>0,risk:1,liq:'Diária (rende no aniversário)',gar:'FGC até R$ 250 mil',bom:'Pouco valor e uso no dia a dia'},
+    {n:`CDB ${String(p.cdb).replace('.',',')}% do CDI`,c:'var(--c2)',a:(p.selic-0.1)*p.cdb/100,ir:irReg,risk:1,liq:'Diária ou no vencimento',gar:'FGC até R$ 250 mil',bom:'Reserva e sonhos de até 3 anos'},
+    {n:'Tesouro Selic',c:'var(--c3)',a:p.selic+0.1,ir:irReg,risk:1,liq:'Diária',gar:'Governo federal',bom:'Reserva de emergência'},
+    {n:'Tesouro IPCA+',c:'var(--c4)',a:((1+p.ipca/100)*(1+p.real/100)-1)*100,ir:irReg,risk:2,liq:'Diária, mas o preço oscila até o vencimento',gar:'Governo federal',bom:'Sonhos longos e aposentadoria'},
+    {n:'Dólar',c:'var(--c5)',a:p.dolB,lo:p.dolP,hi:p.dolO,ir:()=>15,risk:4,liq:'Diária',gar:'Nenhuma',bom:'Viagem ao exterior ou proteção, em pequena parte'},
+    {n:'Ações (Ibovespa)',c:'var(--c6)',a:p.acB,lo:p.acP,hi:p.acO,ir:()=>15,risk:5,liq:'Diária, com risco de vender na baixa',gar:'Nenhuma',bom:'Longo prazo (mais de 5 anos), parte pequena'}
+  ];
+}
+function series(a,irFn){
+  const {ini,mes,anos}=S.inv, n=Math.round(anos*12), i=mRate(a);
+  let g=ini; const out=[ini];
+  for(let m=1;m<=n;m++){g=g*(1+i)+mes;const inv=ini+mes*m,gain=g-inv;out.push(gain>0?inv+gain*(1-irFn(m)/100):g)}
+  return out;
+}
+function nice(v){const e=Math.pow(10,Math.floor(Math.log10(v)));const f=v/e;return (f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10)*e}
+function kfmt(v){return v>=1e6?'R$ '+(v/1e6).toLocaleString('pt-BR',{maximumFractionDigits:1})+' mi':v>=1e3?'R$ '+Math.round(v/1e3).toLocaleString('pt-BR')+' mil':brl(v)}
+function bindInvest(){
+  [['iv_ini','ini'],['iv_mes','mes'],['iv_anos','anos']].forEach(([id,k])=>{
+    const el=$(id);el.value=S.inv[k];
+    el.addEventListener('input',()=>{let v=parseFloat(el.value)||0;if(k==='anos')v=Math.min(40,Math.max(1,v||1));S.inv[k]=v;save();renderInvest()});
+  });
+  $('premGrid').innerHTML=Object.keys(PREM0).map(k=>`<label for="pr_${k}">${PREM_LBL[k]}<input type="number" id="pr_${k}" step="0.1"></label>`).join('');
+  Object.keys(PREM0).forEach(k=>$('pr_'+k).addEventListener('input',e=>{const v=parseFloat(e.target.value);if(!isNaN(v)){S.inv.p[k]=v;save();renderInvest()}}));
+  $('premReset').addEventListener('click',()=>{S.inv.p={...PREM0};save();fillPrem();renderInvest();toast('Taxas de referência restauradas.')});
+  fillPrem();
+}
+function fillPrem(){Object.keys(PREM0).forEach(k=>$('pr_'+k).value=S.inv.p[k])}
+function renderInvest(){
+  const P=products(), n=Math.round(S.inv.anos*12);
+  P.forEach(p=>{p.s=series(p.a,p.ir);if(p.lo!=null){p.sl=series(p.lo,p.ir);p.sh=series(p.hi,p.ir)}});
+  const aplicado=[...Array(n+1)].map((_,m)=>S.inv.ini+S.inv.mes*m);
+  $('ivLegend').innerHTML=P.map(p=>`<span><i style="background:${p.c}"></i>${p.n}</span>`).join('')+`<span><i style="background:var(--muted);height:2px"></i>Total aplicado</span>`;
+  // gráfico
+  const W=720,H=340,L=78,R=16,T=14,B=34,pw=W-L-R,ph=H-T-B;
+  const max=Math.max(1,...P.map(p=>Math.max(...(p.sh||p.s))));
+  const step=nice(max/4), top=Math.ceil(max/step)*step;
+  const X=m=>L+pw*m/n, Y=v=>T+ph*(1-Math.max(0,v)/top);
+  const line=s=>s.map((v,m)=>(m?'L':'M')+X(m).toFixed(1)+' '+Y(v).toFixed(1)).join(' ');
+  let g='';
+  for(let v=0;v<=top+0.001;v+=step)g+=`<line x1="${L}" x2="${W-R}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)"></line><text x="${L-8}" y="${Y(v)+4}" text-anchor="end">${kfmt(v)}</text>`;
+  const ys=S.inv.anos, every=ys<=10?1:ys<=20?2:5;
+  for(let y=0;y<=ys;y+=every)g+=`<text x="${X(y*12)}" y="${H-12}" text-anchor="middle">${y===0?'hoje':y+(y>1?' anos':' ano')}</text>`;
+  P.filter(p=>p.sl).forEach(p=>{g+=`<path d="${line(p.sh)} ${p.sl.map((v,m)=>'L'+X(m).toFixed(1)+' '+Y(v).toFixed(1)).reverse().join(' ')} Z" fill="${p.c}" opacity=".13"></path>`});
+  g+=`<path d="${line(aplicado)}" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="5 4"></path>`;
+  P.forEach(p=>{g+=`<path d="${line(p.s)}" fill="none" stroke="${p.c}" stroke-width="2.5" stroke-linejoin="round"></path><circle cx="${X(n)}" cy="${Y(p.s[n])}" r="4" fill="${p.c}"></circle>`});
+  $('ivChart').innerHTML=g;
+  // tabela
+  const tot=aplicado[n], infl=Math.pow(1+S.inv.p.ipca/100,ys);
+  const pim=mRate(S.inv.p.ipca);let totReal=S.inv.ini;for(let m=1;m<=n;m++)totReal+=S.inv.mes/Math.pow(1+pim,m);
+  const realTxt=v=>{const r=v/infl-totReal;return r>=0?`<span class="good">+${brl(r)}</span>`:`<span class="bad">${brl(r)}</span>`};
+  $('ivTable').innerHTML=`<thead><tr><th>Aplicação</th><th style="text-align:right">Valor final</th><th style="text-align:right">Ganho líquido</th><th style="text-align:right">Ganho acima da inflação</th><th>Risco</th><th>Resgate</th><th>Garantia</th><th>Bom para</th></tr></thead><tbody>`+
+    P.map(p=>{const v=p.s[n];return `<tr><td><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${p.c};margin-right:6px"></span>${p.n}<br><small>${pct(p.a)} ao ano${p.lo!=null?' (cenário médio)':''}</small></td>
+      <td class="n"><b>${brl(v)}</b>${p.sl?`<br><small>entre ${brl(p.sl[n])} e ${brl(p.sh[n])}</small>`:''}</td>
+      <td class="n">${brl(v-tot)}</td><td class="n">${realTxt(v)}</td>
+      <td><span class="risk r${p.risk}" title="Risco ${p.risk} de 5"><i></i><i></i><i></i><i></i><i></i></span></td>
+      <td><small>${p.liq}</small></td><td><small>${p.gar}</small></td><td><small>${p.bom}</small></td></tr>`}).join('')+
+    `<tr><td colspan="8"><small>Total aplicado no período: <b>${brl(tot)}</b>. Imposto de Renda descontado no fim (tabela regressiva de 22,5% a 15% na renda fixa; 15% sobre o ganho em dólar e ações; poupança isenta). Não inclui taxas de corretora, câmbio ou custódia.</small></td></tr></tbody>`;
+}
+
+/* ---------- decidir uma compra ---------- */
+const TIPOS={
+  carro:{n:'Carro',lbValor:'Preço do carro',valor:60000,entrada:15000,taxa:1.8,prazo:48,custos:450,lbCustos:'Seguro, IPVA e manutenção por mês',limite:15,hint:'financiamento de veículo costuma ficar entre 1,5% e 2,5%',
+    checks:['Precisamos do carro para o trabalho ou a rotina da família, não só por desejo.','Pesquisamos o preço em pelo menos três lugares e consideramos um seminovo.','Seguro, IPVA e manutenção já foram somados ao orçamento.','Os dois concordam, sem pressão de um sobre o outro.','Oramos e esperamos pelo menos 30 dias antes de decidir.']},
+  casa:{n:'Casa própria',lbValor:'Preço do imóvel',valor:250000,entrada:50000,taxa:1.0,prazo:360,custos:250,lbCustos:'IPTU, condomínio e manutenção por mês',limite:30,hint:'financiamento imobiliário fica perto de 1% ao mês',
+    checks:['Comparamos o custo de comprar com o de continuar no aluguel.','Visitamos o imóvel e o bairro em dias e horários diferentes.','Conferimos a documentação com cartório ou advogado.','A parcela cabe mesmo se um de nós ficar alguns meses sem renda.','Os dois concordam e oramos juntos sobre a decisão.']},
+  reforma:{n:'Reforma',lbValor:'Custo total da reforma',valor:15000,entrada:5000,taxa:2.5,prazo:24,custos:0,lbCustos:'Custos mensais novos, se houver',limite:10,hint:'crédito pessoal ou consignado: de 1,8% a 5%',
+    checks:['Temos pelo menos três orçamentos por escrito.','Separamos 20% a mais para imprevistos da obra.','A reforma resolve uma necessidade real: segurança, espaço ou conserto.','Dá para fazer em etapas, pagando cada etapa à vista.','Os dois concordam com o projeto e o prazo.']},
+  empresa:{n:'Abrir uma empresa',lbValor:'Investimento inicial',valor:30000,entrada:30000,taxa:2.0,prazo:24,custos:0,lbCustos:'',limite:15,hint:'linhas para empreendedor: de 1,5% a 4%',
+    checks:['Já testamos a ideia vendendo antes de investir pesado.','Sabemos quanto custa produzir e quanto o cliente paga.','Temos reserva para a família viver de 6 a 12 meses sem lucro da empresa.','Conversamos com alguém que já tem um negócio parecido.','Os dois concordam com o risco e o tempo que a empresa vai exigir.']},
+  outro:{n:'Outro bem',lbValor:'Preço do bem',valor:5000,entrada:1000,taxa:3.5,prazo:12,custos:0,lbCustos:'Custos mensais de manter',limite:10,hint:'crediário de loja e cartão parcelado costumam passar de 3%',
+    checks:['Precisamos disso agora; não é vontade do momento.','Pesquisamos preço e comparamos opções.','Esperamos pelo menos 7 dias antes de decidir.','Comprar à vista é possível com algumas semanas de espera.','Os dois concordam com a compra.']}
+};
+const CP_KEYS=['valor','entrada','taxa','prazo','custos','aluguel','fixo','fat','margem'];
+if(!S.compra){S.compra={tipo:'carro',d:{}};}
+function cp(){const t=S.compra.tipo;if(!S.compra.d[t]){const T=TIPOS[t];S.compra.d[t]={valor:T.valor,entrada:T.entrada,taxa:T.taxa,prazo:T.prazo,custos:T.custos,aluguel:1200,fixo:4000,fat:12000,margem:45,checks:[]}}return S.compra.d[t]}
+function bindCompra(){
+  $('tipos').innerHTML=Object.entries(TIPOS).map(([k,T])=>`<button type="button" role="radio" data-tipo="${k}">${T.n}</button>`).join('');
+  document.querySelectorAll('[data-tipo]').forEach(b=>b.addEventListener('click',()=>{S.compra.tipo=b.dataset.tipo;save();renderCompra(true)}));
+  CP_KEYS.forEach(k=>$('cp_'+k).addEventListener('input',e=>{cp()[k]=parseFloat(e.target.value)||0;save();renderCompra(false)}));
+}
+function renderCompra(full){
+  const t=S.compra.tipo,T=TIPOS[t],d=cp();
+  if(full!==false){
+    document.querySelectorAll('[data-tipo]').forEach(b=>b.setAttribute('aria-checked',b.dataset.tipo===t));
+    CP_KEYS.forEach(k=>$('cp_'+k).value=d[k]||'');
+    $('lbValor').textContent=T.lbValor;$('hintTaxa').textContent=T.hint;
+    $('lbCustos').textContent=T.lbCustos;$('cp_custos').closest('.row').hidden=t==='empresa';
+    $('rowAluguel').hidden=t!=='casa';$('rowEmpresa').hidden=t!=='empresa';
+    $('cpChecks').innerHTML=T.checks.map((q,k)=>`<label class="check"><input type="checkbox" id="ck${k}" ${d.checks.includes(k)?'checked':''}> ${q}</label>`).join('');
+    T.checks.forEach((_,k)=>$('ck'+k).addEventListener('change',e=>{d.checks=d.checks.filter(x=>x!==k);if(e.target.checked)d.checks.push(k);save();renderCompra(false)}));
+  }
+  const c=calc(), custos=t==='empresa'?0:d.custos;
+  const F=Math.max(0,d.valor-d.entrada), i=d.taxa/100, n=Math.max(1,Math.round(d.prazo));
+  const parc=F>0?(i>0?F*i/(1-Math.pow(1+i,-n)):F/n):0;
+  const total=d.entrada+parc*n, juros=Math.max(0,total-d.valor);
+  const impacto=parc+custos-(t==='casa'?d.aluguel:0);
+  const pctR=c.entra>0?(parc+custos)/c.entra*100:0;
+  const depois=c.sobra-impacto;
+  // esperar e comprar à vista
+  const iInv=mRate((S.inv.p.selic+0.1)*0.85), iPreco=mRate(S.inv.p.ipca);
+  let mEsp=0,saldo=d.entrada,preco=d.valor;
+  if(F>0&&parc>0){while(saldo<preco&&mEsp<600){mEsp++;saldo=saldo*(1+iInv)+parc;preco*=1+iPreco}}
+  const economia=total-preco;
+  // sinais
+  const bad=[],warn=[];
+  if(c.entra<=0)warn.push('Preencham o diagnóstico (aba 1) para a análise considerar a renda e a sobra do casal.');
+  else if(depois<0)bad.push(`Com essa compra, o mês passaria a fechar faltando <b>${brl(-depois)}</b>.`);
+  const caras=S.debts.filter(x=>x.bal>0&&x.rate>=3);
+  if(caras.length)bad.push(`Ainda há dívida com juros altos (${esc(caras[0].name)}). Quitem antes de assumir um compromisso novo.`);
+  if(c.sai>0&&S.v.p_reserva<c.sai*3)warn.push(`A reserva de emergência cobre menos de 3 meses. Montem a reserva antes, e não usem ela para a entrada.`);
+  if(c.entra>0&&pctR>T.limite)warn.push(`Parcela e custos somam <b>${pct(pctR)}</b> da renda. Para ${T.n.toLowerCase()}, o recomendado é até ${T.limite}%.`);
+  if(F>0&&juros>d.valor*0.3)warn.push(`Só de juros vão pagar <b>${brl(juros)}</b>, ${pct(juros/d.valor*100)} a mais que o preço.`);
+  let emp='';
+  if(t==='empresa'){
+    const lucro=d.fat*d.margem/100-d.fixo-parc, pe=d.margem>0?d.fixo/(d.margem/100):Infinity, pay=lucro>0?Math.ceil(d.valor/lucro):Infinity;
+    if(lucro<=0)bad.push('Com esses números a empresa não cobre os custos fixos e a parcela. Revisem preço, margem ou custos antes de abrir.');
+    else if(pay>36)warn.push(`O investimento só volta em ${tempo(pay)}. Testem a ideia em escala menor primeiro.`);
+    emp=`<div class="sep"></div><span>Lucro estimado por mês</span><b class="${lucro>0?'good':'bad'}">${brl(lucro)}</b>
+      <span>Precisa vender por mês para empatar</span><b>${isFinite(pe)?brl(pe):'—'}</b>
+      <span>O investimento volta em</span><b>${isFinite(pay)?tempo(pay):'não volta'}</b>`;
+  }
+  if(d.checks.length<3)warn.push('Ainda faltam respostas importantes nas perguntas antes de decidir.');
+  const v=bad.length?['Não agora','v-bad','Há sinais de que esta compra vai apertar ou desequilibrar a casa. Resolvam os pontos abaixo primeiro.']:
+          warn.length?['Esperar e se preparar','v-warn','A compra é possível, mas ainda há pontos a ajustar. Um pouco de preparo agora evita aperto depois.']:
+          ['Sinal verde','v-good','Os números cabem e as perguntas foram respondidas. Decidam em paz, juntos.'];
+  $('verdict').className='verdict '+v[1];
+  $('verdict').innerHTML=`<div class="lvl">${v[0]}</div><p>${v[2]}</p>`;
+  $('cpResult').innerHTML=
+    (bad.length||warn.length?`<ul class="flags">${bad.map(x=>`<li class="bad">${x}</li>`).join('')}${warn.map(x=>`<li>${x}</li>`).join('')}</ul>`:'')+
+    `<div class="kv">
+      <span>Valor financiado</span><b>${brl(F)}</b>
+      ${F>0?`<span>Parcela (${n}×)</span><b>${brl(parc)}</b><span>Total pago no fim</span><b>${brl(total)}</b><span>Juros pagos</span><b class="${juros>0?'bad':''}">${brl(juros)}</b>`:''}
+      <div class="sep"></div>
+      <span>Muda o mês do casal em</span><b class="${impacto>0?'bad':'good'}">${impacto>0?'−':'+'}${brl(Math.abs(impacto)).replace('−','')}</b>
+      ${c.entra>0?`<span>Sobra depois da compra</span><b class="${depois>=0?'good':'bad'}">${brl(depois)}</b>`:''}
+      ${t==='carro'?`<span>Desvalorização no 1º ano (cerca de 12%)</span><b>${brl(d.valor*0.12)}</b>`:''}
+      ${emp}
+    </div>`+
+    (F>0&&parc>0?`<div class="decision">${mEsp<600?`<b>E se esperarem?</b> Guardando ${brl(parc)} por mês no Tesouro Selic, compram à vista em <b>${tempo(mEsp)}</b>, já contando a inflação no preço${economia>0?`, e deixam de pagar cerca de <b>${brl(economia)}</b>.`:'.'}`:'Guardando o valor da parcela, a espera seria longa demais. Revisem o valor do bem.'}${t==='casa'?' Na casa própria, lembrem que durante a espera o aluguel continua.':''}</div>`:
+    `<div class="decision">A compra pode ser à vista, sem juros. ${S.v.p_reserva<c.sai*3?'Só não usem a reserva de emergência para isso.':''}</div>`)+
+    (t==='casa'?'<p class="hint" style="margin-top:10px">Bancos costumam usar a tabela SAC, em que a primeira parcela é mais alta e vai diminuindo. Aqui a parcela é a média fixa (tabela Price).</p>':'');
+}
+
+/* ---------- aumentar a renda ---------- */
+const BIZ=[
+  {k:'bolos',cat:'Comida',n:'Bolos e doces por encomenda',d:'Bolos caseiros, de pote e docinhos para aniversários. Encomenda com antecedência evita desperdício.',inv:'R$ 300 a R$ 800 (formas, batedeira, embalagens)',h:'2 a 3 h por dia',u:'bolo',p:70,c:28,q:24},
+  {k:'marmitas',cat:'Comida',n:'Marmitas congeladas',d:'Refeições prontas para a semana, vendidas em kits para quem trabalha fora. Cozinha-se em um ou dois dias fixos.',inv:'R$ 400 a R$ 1.000 (potes, freezer, etiquetas)',h:'Um dia por semana de produção',u:'marmita',p:19,c:9,q:120},
+  {k:'salgados',cat:'Comida',n:'Salgados para festas',d:'Cento de salgados fritos ou congelados para aniversários, chás e eventos da igreja.',inv:'R$ 300 a R$ 700',h:'Concentrado nos fins de semana',u:'cento',p:75,c:32,q:16},
+  {k:'reforco',cat:'Ensino',n:'Aulas de reforço escolar',d:'Ajuda com tarefas, leitura e matemática para crianças do bairro. Ótimo para quem gosta de ensinar.',inv:'Quase nada (mesa, material simples)',h:'2 h por dia, no fim da tarde',u:'aula de 1 h',p:40,c:0,q:40},
+  {k:'musica',cat:'Ensino',n:'Aulas de música',d:'Violão, teclado ou canto para iniciantes, na sua casa ou por vídeo. Quem já toca no louvor tem meio caminho andado.',inv:'O instrumento que vocês já têm',h:'1 a 2 h por dia',u:'aula',p:50,c:0,q:24},
+  {k:'costura',cat:'Serviços',n:'Costura e ajustes de roupas',d:'Barras, zíperes, ajustes e pequenos consertos. Serviço que sempre tem procura e pouca concorrência.',inv:'R$ 600 a R$ 1.500 (máquina de costura)',h:'2 a 3 h por dia',u:'serviço',p:25,c:3,q:60},
+  {k:'beleza',cat:'Serviços',n:'Manicure e sobrancelhas',d:'Atendimento com hora marcada em casa ou na casa da cliente. Fidelizar clientes garante renda todo mês.',inv:'R$ 300 a R$ 600 (kit, esterilização)',h:'2 a 4 h por dia',u:'atendimento',p:40,c:8,q:40},
+  {k:'revenda',cat:'Vendas',n:'Revenda de cosméticos e produtos',d:'Venda por catálogo ou estoque pequeno, divulgado no WhatsApp. A margem é menor, mas o risco também.',inv:'R$ 200 a R$ 500 (primeiro pedido)',h:'1 h por dia',u:'produto',p:60,c:42,q:40},
+  {k:'social',cat:'Online',n:'Redes sociais para pequenos negócios',d:'Criar posts e responder mensagens para padarias, lojas e salões da cidade, com contrato mensal.',inv:'O celular e um aplicativo de design gratuito',h:'2 h por dia',u:'cliente (mensal)',p:450,c:0,q:3},
+  {k:'design',cat:'Online',n:'Edição de vídeos e artes',d:'Vídeos curtos, convites e artes para eventos, igrejas e empresas. Dá para aprender com cursos gratuitos.',inv:'Computador ou celular bom',h:'1 a 3 h por dia',u:'trabalho',p:90,c:0,q:12},
+  {k:'velas',cat:'Artesanato',n:'Velas aromáticas e sabonetes',d:'Produtos para presente, datas comemorativas e kits de lembrança. Embalagem caprichada vende mais.',inv:'R$ 300 a R$ 700 (moldes, cera, essências)',h:'1 a 2 h por dia',u:'peça',p:35,c:12,q:50},
+  {k:'papelaria',cat:'Artesanato',n:'Lembrancinhas e papelaria de festa',d:'Topos de bolo, caixinhas e etiquetas personalizadas para aniversários, batizados e casamentos.',inv:'R$ 500 a R$ 1.500 (impressora, cortes)',h:'2 h por dia',u:'unidade',p:9,c:3.5,q:250}
+];
+if(!S.renda)S.renda={cat:'Todos',vals:{},added:{}};
+function bizVal(b){return S.renda.vals[b.k]||(S.renda.vals[b.k]={p:b.p,c:b.c,q:b.q})}
+function bizLucro(b){const v=bizVal(b);return Math.max(0,(v.p-v.c)*v.q)}
+function renderRenda(){
+  const cats=['Todos',...new Set(BIZ.map(b=>b.cat))];
+  $('rFiltro').innerHTML=cats.map(c=>`<button type="button" role="radio" aria-checked="${S.renda.cat===c}" data-cat="${c}">${c}</button>`).join('');
+  document.querySelectorAll('[data-cat]').forEach(b=>b.addEventListener('click',()=>{S.renda.cat=b.dataset.cat;save();renderRenda()}));
+  const list=BIZ.filter(b=>S.renda.cat==='Todos'||b.cat===S.renda.cat);
+  $('bizList').innerHTML=list.map(b=>{const v=bizVal(b);return `
+    <article class="bcard">
+      <span class="tag">${b.cat}</span>
+      <h4>${b.n}</h4>
+      <p>${b.d}</p>
+      <div class="bmeta"><div>Para começar<b>${b.inv}</b></div><div>Tempo<b>${b.h}</b></div></div>
+      <div class="bcalc">
+        <label>Preço por ${b.u}<input type="number" id="bp_${b.k}" min="0" step="1" value="${v.p}"></label>
+        <label>Custo por ${b.u}<input type="number" id="bc_${b.k}" min="0" step="0.5" value="${v.c}"></label>
+        <label>Quantos por mês<input type="number" id="bq_${b.k}" min="0" step="1" value="${v.q}"></label>
+      </div>
+      <div class="blucro"><span>Lucro por mês</span><b id="bl_${b.k}"></b></div>
+      <p id="bx_${b.k}"></p>
+      <button class="btn small ghost" type="button" id="ba_${b.k}"></button>
+    </article>`}).join('');
+  list.forEach(b=>{
+    ['p','c','q'].forEach(f=>$(`b${f}_${b.k}`).addEventListener('input',e=>{bizVal(b)[f]=parseFloat(e.target.value)||0;save();updBiz(b)}));
+    $('ba_'+b.k).addEventListener('click',()=>{
+      const cur=S.renda.added[b.k]||0;
+      if(cur){S.v.r3=Math.max(0,S.v.r3-cur);delete S.renda.added[b.k];toast('Retirado da renda do casal.')}
+      else{const l=Math.round(bizLucro(b));S.v.r3+=l;S.renda.added[b.k]=l;toast(`Somamos ${brl(l)} em “Outras rendas” no diagnóstico.`)}
+      $('r3').value=S.v.r3||'';save();updBiz(b);
+    });
+    updBiz(b);
+  });
+}
+function updBiz(b){
+  const l=bizLucro(b), c=calc();
+  $('bl_'+b.k).textContent=brl(l);
+  const caras=S.debts.filter(x=>x.bal>0).reduce((a,x)=>a+x.bal,0);
+  $('bx_'+b.k).innerHTML=l<=0?'Com esses números não sobra lucro. Revisem o preço.':
+    `Em 1 ano, cerca de <b>${brl(l*12)}</b>.`+(caras>0?` Só com esse lucro, as dívidas de ${brl(caras)} sairiam em uns <b>${tempo(Math.ceil(caras/l))}</b>.`:'');
+  $('ba_'+b.k).textContent=S.renda.added[b.k]?'Retirar da renda do casal':'Somar à renda do casal';
+}
+
+/* ---------- geral ---------- */
+let tt;function toast(t){const el=$('toast');el.textContent=t;el.hidden=false;clearTimeout(tt);tt=setTimeout(()=>el.hidden=true,2600)}
+function renderAll(){renderDebts();renderDiag();renderTrail();renderPlan();renderDreams();renderChoices();renderInvest();renderCompra(true);renderRenda()}
+const TABS=['diag','trilha','sonhos','decisoes','invest','compra','renda'];
+bindDiag();bindInvest();bindCompra();
+const start=(location.hash||'').slice(1);
+if(TABS.includes(start))show(start);else renderAll();
+window.addEventListener('hashchange',()=>{const h=location.hash.slice(1);if(TABS.includes(h))show(h)});
+})();
+</script>
+
+</body>
+</html>

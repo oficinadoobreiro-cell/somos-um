@@ -1,0 +1,629 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="App do Curso de Casais Somos Um">
+<meta name="theme-color" content="#2B3A67">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Somos Um">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-size:14px}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Somos Um</title>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: cabeçalho fixo com navegação (Início, Diagnóstico, Trilha, Lições, Diário, Aliança); coluna de até 920px; cada lição abre como uma página própria */
+:root{
+  --bg:#F3F4F8; --surface:#FFFFFF; --soft:#E8EAF2; --ink:#1C2238; --muted:#596079; --line:#D7DAE6;
+  --primary:#2B3A67; --primary-ink:#FFFFFF; --accent:#B07D2B;
+  --ph1:#3D6FB5; --ph2:#C2652F; --ph3:#2E8A6B; --ph4:#5B4A9E;
+  --good:#2C7D52; --warn:#B07D2B; --bad:#B8463A;
+  --display:"Young Serif", Georgia, "Times New Roman", serif;
+  --body:"Figtree", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#12141E; --surface:#1A1D2B; --soft:#232738; --ink:#E6E8F2; --muted:#A0A6BD; --line:#2E3347;
+  --primary:#8FA3E0; --primary-ink:#12141E; --accent:#E0B062;
+  --ph1:#79A6E8; --ph2:#EE9A68; --ph3:#5FC59F; --ph4:#A495E6;
+  --good:#5DBB86; --warn:#E0B062; --bad:#E2786B; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12141E; --surface:#1A1D2B; --soft:#232738; --ink:#E6E8F2; --muted:#A0A6BD; --line:#2E3347;
+  --primary:#8FA3E0; --primary-ink:#12141E; --accent:#E0B062;
+  --ph1:#79A6E8; --ph2:#EE9A68; --ph3:#5FC59F; --ph4:#A495E6;
+  --good:#5DBB86; --warn:#E0B062; --bad:#E2786B; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+.wrap{max-width:920px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-block:12px 4px}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--display);font-size:1.5rem;color:var(--primary);text-decoration:none}
+.brand small{color:var(--muted);font-size:.85rem}
+nav{display:flex;gap:2px;overflow-x:auto}
+nav a{font-weight:600;font-size:.92rem;color:var(--muted);padding:10px 12px;border-bottom:3px solid transparent;text-decoration:none;white-space:nowrap}
+nav a[aria-current="page"]{color:var(--primary);border-bottom-color:var(--accent)}
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+main{padding-block:24px 64px}
+h1,h2{font-family:var(--display);font-weight:400;line-height:1.2;text-wrap:balance;margin:0 0 8px}
+h1{font-size:1.9rem} h2{font-size:1.4rem}
+h3{font-size:1.02rem;margin:0 0 10px}
+.lead{color:var(--muted);max-width:62ch;margin:0 0 20px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+@media (max-width:700px){.grid2{grid-template-columns:minmax(0,1fr)}}
+.btn{font:inherit;font-weight:600;border-radius:8px;padding:10px 16px;cursor:pointer;border:1px solid var(--primary);background:var(--primary);color:var(--primary-ink);text-decoration:none;display:inline-flex;align-items:center;gap:6px;min-height:44px}
+.btn.ghost{background:transparent;color:var(--primary)}
+.btn.small{padding:6px 12px;min-height:36px;font-size:.88rem}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.hint{color:var(--muted);font-size:.86rem}
+.chip{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:3px 9px;border-radius:999px;border:1px solid currentColor}
+.good{color:var(--good)} .warn{color:var(--warn)} .bad{color:var(--bad)}
+/* início */
+.hero{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:20px;align-items:center}
+@media (max-width:700px){.hero{grid-template-columns:minmax(0,1fr)}}
+.progress{height:10px;background:var(--soft);border-radius:5px;overflow:hidden;margin:8px 0}
+.progress i{display:block;height:100%;background:var(--accent)}
+.journey{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+@media (max-width:640px){.journey{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.lcard{display:flex;flex-direction:column;gap:4px;padding:12px;border-radius:12px;background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--c);text-decoration:none;color:var(--ink);min-height:112px}
+.lcard:hover{border-color:var(--c)}
+.lcard small{color:var(--muted);font-size:.78rem}
+.lcard b{font-size:.98rem;line-height:1.25}
+.lcard .mini{height:5px;background:var(--soft);border-radius:3px;overflow:hidden;margin-top:auto}
+.lcard .mini i{display:block;height:100%;background:var(--c)}
+.lcard.done{background:color-mix(in srgb,var(--c) 10%,var(--surface))}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.84rem;color:var(--muted);margin:10px 0 0}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:12px;height:12px;border-radius:3px;background:var(--c)}
+/* diagnóstico */
+.q{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px 16px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.q:last-child{border-bottom:0}
+.q .area{font-size:.72rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.q p{margin:2px 0 0;font-size:.95rem}
+.seg{display:flex;gap:3px;align-items:center}
+.seg span{font-size:.72rem;color:var(--muted);width:30px;text-align:right;margin-right:4px}
+.seg button{width:32px;height:32px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;font-weight:600;font-size:.88rem;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--primary);border-color:var(--primary);color:var(--primary-ink)}
+.seg.ela button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+@media (max-width:640px){.q{grid-template-columns:minmax(0,1fr)}.seg span{width:auto}}
+.scale{font-size:.84rem;color:var(--muted);margin-bottom:6px}
+.res{display:grid;gap:10px}
+.rrow{display:grid;grid-template-columns:150px minmax(0,1fr) 60px;gap:10px;align-items:center;font-size:.9rem}
+@media (max-width:520px){.rrow{grid-template-columns:minmax(0,1fr) 54px}.rrow .bars{grid-column:1/-1;order:3}}
+.bars{display:grid;gap:3px}
+.bar{height:9px;background:var(--soft);border-radius:4px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:4px}
+.bar.ele i{background:var(--primary)} .bar.ela i{background:var(--accent)}
+.rrow b{font-variant-numeric:tabular-nums;text-align:right;font-size:.85rem}
+.keyl{display:flex;gap:16px;font-size:.84rem;color:var(--muted);margin-bottom:10px}
+.keyl i{display:inline-block;width:12px;height:6px;border-radius:3px;margin-right:6px;vertical-align:middle}
+.dt{width:100%;border-collapse:collapse;font-size:.9rem;font-variant-numeric:tabular-nums}
+.dt th{text-align:left;font-size:.74rem;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);padding:8px;border-bottom:1px solid var(--line)}
+.dt td{padding:8px;border-bottom:1px solid var(--line)}
+.dt td.n{text-align:right}
+/* lição */
+.lhead{border-left:6px solid var(--c);padding-left:14px;margin-bottom:18px}
+.lhead .chip{color:var(--c)}
+.verse{font-family:var(--display);font-size:1.08rem;color:var(--primary);margin:0}
+.verse span{display:block;font-family:var(--body);font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+.points{margin:0;padding-left:20px} .points li{margin-bottom:8px}
+.research{border-left:3px solid var(--accent);padding:4px 0 4px 12px;font-size:.93rem}
+.research a{color:var(--primary)}
+.days{display:grid;gap:8px}
+.day{display:flex;gap:12px;align-items:flex-start;padding:10px 12px;border-radius:10px;background:var(--bg);cursor:pointer}
+.day input{width:22px;height:22px;margin-top:1px;accent-color:var(--primary);flex:none}
+.day b{display:block;font-size:.78rem;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.day.checked{opacity:.65} .day.checked span{text-decoration:line-through}
+textarea{width:100%;min-height:110px;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px}
+input[type=text],input[type=date]{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px}
+.verdict{border-radius:10px;padding:12px 14px;margin-top:12px;font-size:.93rem}
+.v-good{background:color-mix(in srgb,var(--good) 14%,transparent)}
+.v-warn{background:color-mix(in srgb,var(--warn) 16%,transparent)}
+.v-bad{background:color-mix(in srgb,var(--bad) 14%,transparent)}
+.tool{background:color-mix(in srgb,var(--ph3) 10%,var(--surface));border-color:var(--ph3)}
+.pager{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:8px}
+/* pacto */
+.pact{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+.pact label{display:flex;gap:12px;align-items:flex-start;padding:10px 12px;border-radius:10px;background:var(--bg);cursor:pointer}
+.pact input{width:22px;height:22px;accent-color:var(--primary);flex:none;margin-top:1px}
+.sealed{text-align:center;padding:24px 12px}
+.sealed .seal{font-family:var(--display);font-size:1.5rem;color:var(--primary)}
+/* trilha e diário */
+.tchoice{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:16px}
+@media (max-width:640px){.tchoice{grid-template-columns:minmax(0,1fr)}}
+.tchoice button{font:inherit;text-align:left;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;border-top:4px solid var(--c)}
+.tchoice button[aria-pressed="true"]{background:color-mix(in srgb,var(--c) 12%,var(--surface));border-color:var(--c)}
+.tchoice b{display:block} .tchoice small{color:var(--muted)}
+.week{margin-bottom:16px}
+.week h3{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.tday{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;padding:10px 12px;border-radius:10px;background:var(--bg);margin-bottom:6px;cursor:pointer}
+.tday input{width:22px;height:22px;accent-color:var(--primary);margin-top:2px}
+.tday b{font-size:.95rem} .tday p{margin:2px 0 0;font-size:.93rem} .tday small{color:var(--muted);font-size:.8rem}
+.tday.checked{opacity:.6} .tday.checked p{text-decoration:line-through}
+.alert{border-radius:12px;padding:14px 16px;margin-bottom:16px;background:color-mix(in srgb,var(--bad) 12%,var(--surface));border:1px solid var(--bad)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.tabs button{font:inherit;font-weight:600;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;min-height:40px}
+.tabs button[aria-pressed="true"]{background:var(--primary);border-color:var(--primary);color:var(--primary-ink)}
+.entry{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 12px;padding:10px 0;border-bottom:1px solid var(--line);align-items:start}
+.entry:last-child{border-bottom:0}
+.entry p{margin:0} .entry small{color:var(--muted)}
+.entry.answered p{color:var(--good)}
+.form{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;align-items:center}
+@media (max-width:560px){.form{grid-template-columns:minmax(0,1fr)}}
+select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-size:.9rem;z-index:20}
+.note{font-size:.8rem;color:var(--muted);margin-top:28px;max-width:70ch}
+@media (prefers-reduced-motion:no-preference){.bar i,.progress i,.mini i{transition:width .35s ease}}
+</style>
+</head>
+<body>
+
+
+<header>
+  <div class="wrap">
+    <div class="brand">
+      <a class="logo" href="#inicio" aria-label="Somos Um, início">
+        <svg width="40" height="30" viewBox="0 0 40 30" aria-hidden="true"><circle cx="14" cy="15" r="10" fill="none" stroke="var(--primary)" stroke-width="3.5"></circle><circle cx="26" cy="15" r="10" fill="none" stroke="var(--accent)" stroke-width="3.5"></circle></svg>
+        Somos Um
+      </a>
+      <small>Curso de Casais · Igreja Verbo da Vida</small>
+    </div>
+    <nav aria-label="Seções">
+      <a href="#inicio" data-nav="inicio">Início</a>
+      <a href="#diagnostico" data-nav="diagnostico">Diagnóstico</a>
+      <a href="#trilha" data-nav="trilha">Trilha de 30 dias</a>
+      <a href="#licoes" data-nav="licoes">Lições</a>
+      <a href="#diario" data-nav="diario">Diário do casal</a>
+      <a href="#alianca" data-nav="alianca">Nossa aliança</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap" id="view" aria-live="polite"></main>
+<div class="wrap"><p class="note">Os dados ficam salvos só neste aparelho e neste navegador; nada é enviado para ninguém. Usem sempre o mesmo celular do casal. Os diagnósticos ajudam a conversar e não substituem o acompanhamento pastoral.</p></div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function(){
+const MORDOMIA='mordomia-a-dois.html';
+const PH=[
+  {n:'Alicerce',c:'var(--ph1)'},{n:'Paredes: o convívio',c:'var(--ph2)'},{n:'Cômodos da casa',c:'var(--ph3)'},{n:'Telhado',c:'var(--ph4)'}
+];
+const L=[
+ {t:'Aliança',full:'Aliança: o projeto de Deus para o casamento',ph:0,
+  v:'“Deixa o homem pai e mãe e se une à sua mulher, tornando-se os dois uma só carne.”',vr:'Gênesis 2.24',
+  sum:'Casamento não é contrato, é aliança: um compromisso sem limite de responsabilidade, para durar até a morte, com Deus como testemunha e parceiro.',
+  pts:['Contrato protege cada parte do outro; aliança entrega uma parte à outra. Cuidado com o “meu” e o “seu” em casa: bens, dívidas e filhos são “nossos”.','Deixar, unir-se e tornar-se uma só carne: o casamento vem antes dos pais, é escolhido todos os dias e só Deus faz de dois um.','O triângulo do casamento: quanto mais perto de Deus, mais perto um do outro. O cordão de três dobras não se rompe com facilidade (Eclesiastes 4.12).','A unidade acontece no corpo, na alma e no espírito, com transparência total. Desistir não é opção (Mateus 19.8).'],
+  res:'Em 2024 o Brasil registrou 948,9 mil casamentos e 428,3 mil divórcios; os casamentos que terminam duram em média 13,8 anos.',rsrc:'IBDFAM, com dados do IBGE',rurl:'https://ibdfam.org.br/noticias/13484/Div%C3%B3rcios+caem+e+casamentos+sobem+em+2024%2C+aponta+IBGE',
+  din:'O cordão de três dobras: o casal trança três fitas (ele, ela e Deus) enquanto o líder lê Eclesiastes 4.9-12, e escreve uma promessa da aliança para renovar.',
+  qs:['Em que áreas ainda falamos “meu” e “seu” em vez de “nosso”?','Já deixamos de verdade pai e mãe?','Em qual das três dimensões estamos mais distantes?'],
+  days:['Releiam juntos os votos do casamento (ou escrevam novos).','Troquem um “meu” por “nosso” numa conversa sobre dinheiro ou bens.','Cada um diz uma qualidade que vê no outro como presente de Deus.','Orem juntos por cinco minutos, de mãos dadas.','Contem um ao outro um sonho que nunca tinham compartilhado.','Façam algo pelo corpo do outro: massagem, prato preferido, descanso.','Leiam Malaquias 2.13-16 e conversem sobre ele.'],
+  diag:['Trato nosso casamento como aliança, não como contrato.','Nada do que tenho é só “meu”: bens, dinheiro e dívidas são nossos.','Nossos pais e parentes respeitam as decisões do nosso casal.','Não guardo segredos do meu cônjuge.','A separação não é uma opção considerada nas nossas brigas.']},
+ {t:'Papéis',full:'Papéis: marido e esposa no plano de Deus',ph:0,
+  v:'“Não é bom que o homem esteja só; far-lhe-ei uma auxiliadora que lhe seja idônea.”',vr:'Gênesis 2.18',
+  sum:'Marido e esposa foram criados para se completar, não para competir. O modelo não é a casa dos pais, é Cristo e a Igreja (Efésios 5.22-33).',
+  pts:['O marido é chamado a proteger, liderar servindo, prover, amar e interceder, como Cristo ama a Igreja.','A esposa é auxiliadora (posição vital, não secundária), apoiadora, administradora, companheira e intercessora.','Submissão não é inferioridade: é caminhar juntos “sob uma missão”. Antes, os dois se sujeitam um ao outro (Efésios 5.21).','Quando um não assume sua parte, o outro fica sobrecarregado e o casamento se desequilibra.'],
+  res:'No Brasil, as mulheres dedicam em média 21,3 horas por semana aos afazeres domésticos e ao cuidado de pessoas; os homens, 11,7 horas (PNAD 2022).',rsrc:'Agência Gov, com dados do IBGE',rurl:'https://agenciagov.ebc.com.br/noticias/202308/em-2022-mulheres-dedicaram-9-6-horas-por-semana-a-mais-do-que-os-homens-aos-afazeres-domesticos-ou-ao-cuidado-de-pessoas',
+  din:'Quem faz o quê: o casal marca a porcentagem de vezes em que cada um assume tarefas como falar, ouvir, disciplinar os filhos, encorajar, cuidar da casa e tomar a iniciativa espiritual, e conversa sobre o que os números revelam.',
+  qs:['Que modelo de marido e de esposa cada um trouxe de casa?','O que entendemos por liderança? E por submissão?','Em qual papel me sinto mais forte, e em qual preciso crescer?'],
+  days:['Pergunte ao outro: “O que posso fazer hoje para tornar seu dia mais leve?” e faça.','O marido assume uma tarefa da casa que normalmente fica com a esposa.','A esposa elogia o marido diante dos filhos ou de outras pessoas.','O marido conduz um momento de oração em família.','Decidam juntos uma questão pendente, ouvindo primeiro o outro.','Cada um ora pelo outro, em voz alta, por uma área específica.','Leiam Efésios 5.21-33 e digam qual versículo mais confrontou cada um.'],
+  diag:['Conheço e assumo as responsabilidades do meu papel.','Sinto que meu cônjuge assume as responsabilidades dele(a).','As tarefas da casa e dos filhos estão divididas de forma justa.','As decisões importantes são tomadas em conjunto.','Sinto-me respeitado(a) e valorizado(a) no meu papel.']},
+ {t:'Comunicação',full:'Comunicação que aproxima',ph:1,
+  v:'“Todo homem seja pronto para ouvir, tardio para falar, tardio para se irar.”',vr:'Tiago 1.19',
+  sum:'O amor une o casal, mas é a comunicação que mantém a casa de pé. Dialogar = falar + ouvir + compreender + ser compreendido.',
+  pts:['Falar a verdade em amor (Efésios 4.15). “Você nunca” e “você sempre” saem do vocabulário do casal.','Os quatro passos: observar o fato sem julgar, dizer o que sente, dizer do que precisa e fazer um pedido claro.','Ouvir sem interromper, olhando para o outro, sem ensaiar a resposta (Provérbios 18.13).','Três inimigos: silêncio e isolamento, discussão em público e cobrança excessiva. Conheçam a linguagem do amor um do outro.'],
+  res:'Nas observações de John Gottman, casais estáveis mostraram cerca de 5 momentos positivos para cada negativo durante uma discussão; nos que se separaram, a proporção era de 0,8 para 1.',rsrc:'Relationship Institute Australasia',rurl:'https://relationshipinstitute.com.au/news/what-predicts-divorce',
+  din:'Cinco minutos sem interrupção: um fala sobre como se sente no casamento e o outro só ouve; depois resume o que entendeu. Trocam os papéis e reescrevem uma frase de briga com os quatro passos.',
+  qs:['Qual dos três inimigos da comunicação está mais presente em casa?','Qual é a minha linguagem do amor? E a sua?','Existe algum assunto que evitamos há muito tempo?'],
+  days:['15 minutos de conversa sem celular: “Como foi seu dia de verdade?”','Um dia sem “você nunca” e “você sempre”.','Cada um faz cinco elogios sinceros ao outro.','Usem os quatro passos para fazer um pedido pequeno.','Perguntem: “O que faz você se sentir mais amado(a)?” e anotem.','Façam algo na linguagem do amor do outro.','Orem entregando a Deus o assunto mais difícil de conversar.'],
+  diag:['Falo o que sinto sem atacar meu cônjuge.','Ouço até o fim, sem interromper.','Evito “você nunca” e “você sempre”.','Não uso o silêncio como castigo.','Elogio meu cônjuge mais do que critico.']},
+ {t:'Conflitos',full:'Conflitos e as raposinhas que destroem a vinha',ph:1,
+  v:'“Apanhai-nos as raposinhas, que fazem mal às vinhas, porque as nossas vinhas estão em flor.”',vr:'Cânticos 2.15',
+  sum:'Todo casal discorda, e isso não é falta de amor. O que destrói o casamento é a forma de brigar e as pequenas atitudes que entram sem ninguém perceber.',
+  pts:['Raposinhas do casamento: murmuração, orgulho, mentira, ira, fofoca, indiferença e falta de perdão.','Os quatro cavaleiros (Gottman): crítica, desprezo, defensividade e muro de pedra. Cada um tem um antídoto.','O mesmo gatilho leva à ferida ou ao acordo; o que muda o final é a pausa, a oração e a conversa marcada.','“Não se ponha o sol sobre a vossa ira” (Efésios 4.26). Roupa suja se lava em casa.'],
+  res:'Nos estudos de Gottman, os casais que mostravam com frequência os quatro cavaleiros se separaram, em média, 5,6 anos depois do casamento.',rsrc:'Relationship Institute Australasia',rurl:'https://relationshipinstitute.com.au/news/what-predicts-divorce',
+  din:'As regras do nosso bom combate: o casal escreve de 5 a 7 combinados para discordar (sem gritos, sem falar em divórcio, pausa com hora para voltar, não dormir brigados), cada um aponta sua raposinha e os dois assinam.',
+  qs:['Qual assunto mais gera briga entre nós? Já foi resolvido?','Qual dos quatro cavaleiros aparece mais em mim? E em você?','Como nossas famílias de origem brigavam?'],
+  days:['Um dia inteiro sem murmurar: cada reclamação vira um agradecimento.','Peçam perdão por algo pequeno que ficou para trás.','Combinem o sinal da pausa e a regra de voltar a conversar.','Cada um diz três coisas que admira no outro.','Apaguem qualquer reclamação do cônjuge feita a outras pessoas ou na internet.','Resolvam um assunto pendente com os quatro passos.','Leiam Tiago 3.2-12 e orem pelas palavras da casa.'],
+  diag:['Nossas discussões terminam em acordo.','Consigo pedir uma pausa em vez de explodir.','Falo do problema sem atacar a pessoa.','Não uso ironia nem deboche com meu cônjuge.','Não dormimos brigados.']},
+ {t:'Perdão',full:'Perdão e cura das feridas',ph:1,
+  v:'“Perdoando-vos uns aos outros, como também Deus, em Cristo, vos perdoou.”',vr:'Efésios 4.32',
+  sum:'Duas pessoas imperfeitas vão se ferir. Só o perdão impede que as feridas virem muros. Perdoar é decisão, não sentimento.',
+  pts:['Perdoados para perdoar: o amor de Deus derramado em nós nos capacita (Romanos 5.5).','A falta de perdão aprisiona os dois, como na parábola do credor incompassivo (Mateus 18.23-35).','Perdão não espera o arrependimento do outro, não é só uma vez e não usa mais a ofensa como arma (Isaías 43.25).','Perdoar não significa permanecer em situação de violência. Nesses casos, segurança primeiro: líderes, Ligue 180 ou 190.'],
+  res:'Num estudo de Fincham, Beach e Davila, a disposição da esposa em perdoar com benevolência previa melhor resolução de conflitos, segundo o marido, um ano depois.',rsrc:'PubMed',rurl:'https://ncbi.nlm.nih.gov/pubmed/17874941',
+  din:'A pedra no bolso: cada um segura uma pedra que representa uma mágoa. Depois da leitura de Mateus 18.21-35, quem decidir perdoar deposita a pedra no cesto; quem ainda não conseguir leva a pedra no bolso durante a semana.',
+  qs:['Existe alguma ofensa entre nós ainda não resolvida?','Tenho facilidade para pedir perdão? E para perdoar?','Há alguém fora do casamento que ainda precisamos perdoar?'],
+  days:['Cada um escreve, sozinho, as mágoas que ainda carrega.','Orem sobre a lista e decidam perdoar, item por item.','Peçam perdão um ao outro por algo específico, olhando nos olhos.','Orem em voz alta abençoando alguém que feriu vocês.','Rasguem ou queimem as listas.','Leiam juntos Mateus 18.21-35.','Agradeçam a Deus pelo perdão recebido em Cristo.'],
+  diag:['Peço perdão quando erro, sem desculpas.','Perdoo sem esperar que o outro peça primeiro.','Não trago de volta erros que já foram perdoados.','Não guardo mágoa de pessoas do passado.','Consigo me perdoar pelos meus próprios erros.']},
+ {t:'Amizade e romance',full:'Amizade, romance e tempo a dois',ph:1,
+  v:'“Este é o meu amado, este é o meu amigo.”',vr:'Cânticos 5.16',
+  sum:'O romance não acaba porque o amor morreu; acaba porque deixou de ser alimentado. Marido e esposa devem ser os melhores amigos um do outro.',
+  pts:['Todo casamento passa por fases: lua de mel, desilusão, luta pelo poder, estabilidade e renovação. Nas fases do meio, o amor vira escolha.','Ladrões do tempo a dois: telas, filhos no centro de tudo, excesso de trabalho, rotina e conversa só sobre problemas.','O namoro não termina no altar: voltem às primeiras obras (Apocalipse 2.4-5).','Encontros não precisam custar caro: piquenique, caminhada, café à luz de velas.'],
+  res:'Entre casais com encontros a dois pelo menos uma ou duas vezes por mês, 83% das esposas e 84% dos maridos se diziam “muito felizes”; sem esse hábito, 68% e 70%.',rsrc:'National Marriage Project, 2023',rurl:'https://nationalmarriageproject.org/2023-date-night-opportunity',
+  din:'O detetive do amor: cada um escreve dez perguntas sobre si mesmo; os dois trocam as folhas e tentam responder sobre o outro. No final, marcam a data do próximo encontro.',
+  qs:['Em que fase do relacionamento estamos hoje?','Quando foi nosso último encontro só nós dois?','O que você fazia no namoro que eu sinto falta?'],
+  days:['Silêncio com propósito: 15 minutos de mãos dadas, orando em silêncio um pelo outro.','Carta de oração: “Hoje eu orei por você assim...”','Toque sem pressa: carinho sem expectativa de sexo.','Ceia a dois: preparem juntos uma refeição e brindem “por nossa aliança em Deus”.','Gratidão: listem cinco coisas que admiram um no outro.','Promessa nova: cada um faz uma promessa simples por escrito.','Devocional a dois: Salmo 133 ou 1 Coríntios 13 e uma declaração de reconexão.'],
+  diag:['Meu cônjuge é meu melhor amigo.','Temos tempo a sós, sem filhos e sem celular, toda semana.','Rimos juntos com frequência.','Ainda faço gestos de romance, como no namoro.','Conheço os sonhos e os medos atuais do meu cônjuge.']},
+ {t:'Sexualidade',full:'Sexualidade e pureza no casamento',ph:2,
+  v:'“Digno de honra entre todos seja o matrimônio, bem como o leito sem mácula.”',vr:'Hebreus 13.4',
+  sum:'O sexo foi criado por Deus para coroar a aliança: alegria, prazer e união entre marido e esposa. A aliança é o lugar seguro da entrega total.',
+  pts:['A Bíblia não tem vergonha do assunto: Provérbios 5.15-19 e Cânticos celebram o amor do casal.','Intimidade começa fora do quarto: bilhetes, beijos, carinho, risadas.','Ninguém usa 1 Coríntios 7 como arma; e a privação prolongada abre espaço para a tentação (1 Coríntios 7.5).','Não existe pornografia inocente. Muros de proteção: pureza pessoal e prestação de contas.'],
+  res:'Um estudo Barna e Pure Desire (2024) mostrou que 54% dos cristãos nos EUA relatam ver pornografia, incluindo 75% dos homens e 40% das mulheres cristãs.',rsrc:'Religion Unplugged',rurl:'https://religionunplugged.com/news/2024/10/23/porn-use-grows-among-christians-forcing-churches-to-offer-healing',
+  din:'O cartão do carinho: cada um escreve, em segredo, três gestos fora do quarto que o fazem se sentir amado e desejado, e entrega ao cônjuge num envelope para abrir em casa.',
+  qs:['Estamos satisfeitos com nossa intimidade?','Existe algo que me constrange ou magoa nessa área?','Que proteções precisamos colocar no celular e na internet?'],
+  days:['Um beijo de verdade na saída ou na chegada.','Uma mensagem carinhosa no meio do dia, sem motivo.','Combinem: nada de celular na cama.','Um momento de carinho sem expectativa de sexo.','Leiam juntos Cânticos 2.','Uma noite planejada a dois.','Orem pela pureza da casa e pelos muros de proteção.'],
+  diag:['Estou satisfeito(a) com nossa vida íntima.','Conseguimos conversar sobre sexo sem vergonha nem brigas.','Demonstro carinho fora do quarto.','Guardo meus olhos de pornografia e conteúdos impróprios.','Meu cônjuge tem acesso livre ao meu celular e senhas.']},
+ {t:'Filhos',full:'Filhos: criar e discipular em família',ph:2,
+  v:'“Ensina a criança no caminho em que deve andar, e, ainda quando for velho, não se desviará dele.”',vr:'Provérbios 22.6',
+  sum:'No plano de Deus, a casa é o primeiro lugar onde os filhos aprendem quem Deus é. A responsabilidade principal é dos pais.',
+  pts:['Antes de educar, olhem para a bagagem que trouxeram da própria criação, e perdoem o que for preciso.','Três práticas diárias: oração, Bíblia e testemunho, com pai e mãe unidos na base.','Disciplina com calma e firmeza, nunca com raiva; os pais combinam as regras antes (Efésios 6.4).','Cada fase pede um cuidado; na adolescência, ouvir mais e acompanhar a vida digital.'],
+  res:'92% das crianças e adolescentes de 9 a 17 anos usam a internet, quase todos pelo celular; só 31% dizem que os pais ajudam em alguma atividade on-line.',rsrc:'TIC Kids Online Brasil 2025, Cetic.br',rurl:'https://www.cetic.br/media/analises/tic_kids_online_brasil_2025_principais_resultados.pdf',
+  din:'A mala da família: o casal anota o que recebeu da criação dos pais e separa o que “levamos” para os filhos e o que “deixamos”. Escolhem três regras da casa e oram por cada filho pelo nome.',
+  qs:['Em que pontos discordamos sobre a educação dos filhos?','Nossos filhos nos veem orando e lendo a Bíblia?','Sabemos o que eles fazem no celular?'],
+  days:['Ore por cada filho, pelo nome, com a mão sobre ele.','Façam o primeiro culto doméstico: versículo, conversa curta e oração.','Uma refeição em família sem celulares na mesa.','Pai e mãe combinam, a sós, as consequências para as desobediências comuns.','15 minutos a sós com cada filho, fazendo o que ele escolher.','Peça perdão a um filho por algo em que você errou.','Abençoem os filhos em voz alta com Números 6.24-26.'],
+  diag:['Concordamos sobre regras e disciplina.','Corrijo com calma, sem gritos nem raiva.','Oramos e lemos a Bíblia com os filhos.','Nossos filhos veem em nós o que ensinamos.','Acompanhamos o que os filhos fazem na internet.']},
+ {t:'Finanças',full:'Mordomia a Dois: finanças e família',ph:2,
+  v:'“Qual de vós, querendo edificar uma torre, não se assenta primeiro a calcular as despesas?”',vr:'Lucas 14.28',
+  sum:'O dinheiro do casal pertence a Deus e foi confiado aos dois. Com mentalidade de mordomo, organização e transparência, qualquer casa pode decolar.',
+  pts:['Deus é o dono e a fonte; prosperidade é avançar no próprio caminho, não imitar o consumo dos outros.','Casamento não tem caixa dois: nenhum segredo financeiro entre os dois (Salmo 133).','Avião, ônibus ou submarino: altitude = bens menos dívidas; direção = as metas do casal.','Toda renda vira pão (sustento), semente (dízimos e ofertas) e reserva (quitar dívidas e guardar).'],
+  res:'Em julho de 2026, 82% das famílias brasileiras tinham dívidas e 29,8% estavam com contas em atraso; o cartão de crédito era a principal dívida (85,3%).',rsrc:'Peic/CNC, via Mercado & Consumo',rurl:'https://mercadoeconsumo.com.br/06/08/2026/noticias/cnc-endividamento-das-familias-sobe-para-82-mas-inadimplencia-cai/',
+  din:'Pão, semente e reserva: com dinheiro de brinquedo, cada casal distribui a renda de um casal fictício em três envelopes. Depois, todos abrem a ferramenta Mordomia a Dois e fazem o diagnóstico com os números reais da casa.',
+  qs:['Hoje nossa casa é avião, ônibus ou submarino?','Existe algum gasto ou dívida que um de nós ainda não contou ao outro?','Qual é o primeiro sonho que queremos conquistar juntos?'],
+  days:['Orem entregando as finanças a Deus e façam o diagnóstico no Mordomia a Dois.','Juntem extratos, faturas e carnês e listem todas as dívidas.','Anotem todos os gastos do dia, até o cafezinho.','Escolham duas pequenas decisões para economizar.','Separem a semente antes de qualquer outro gasto.','Escrevam um sonho com valor e prazo na aba Nossos sonhos.','Façam a primeira reunião financeira do casal e marquem a próxima.'],
+  diag:['Sabemos quanto ganhamos, gastamos e devemos.','Não há segredos financeiros entre nós.','Gastamos menos do que ganhamos.','Temos dinheiro guardado para emergências.','Somos fiéis e generosos nos dízimos e ofertas.'],tool:true},
+ {t:'Vida espiritual',full:'Vida espiritual e proteção do lar',ph:3,
+  v:'“Se o Senhor não edificar a casa, em vão trabalham os que a edificam.”',vr:'Salmo 127.1',
+  sum:'Tudo o que foi aprendido tem um alvo: o estilo de vida santo do casal. A vida espiritual a dois é o telhado que protege todos os cômodos.',
+  pts:['Estilo de vida se herda e se escolhe: Isaque repetiu a mentira de Abraão, mas a santidade também passa de pais para filhos.','O momento de maior intimidade do casal é a oração a dois. Há poder no acordo (Mateus 18.19).','Quatro hábitos giram juntos: devocional pessoal, oração a dois, culto em família, igreja e serviço.','A defesa contra os ataques ao lar é a armadura de Deus (Efésios 6.10-18), vestida pelos dois.'],
+  res:'78% dos casais que oram juntos toda semana se diziam “muito” ou “extremamente felizes”, contra 61% dos que não oram juntos.',rsrc:'Institute for Family Studies (W. Bradford Wilcox), via For Your Marriage',rurl:'https://www.foryourmarriage.org/blogs/the-couple-that-prays-together-is-happier-together/',
+  din:'Padrões santos e padrões do mundo: o casal lista os hábitos da casa, classifica cada um com um versículo e escreve o que vai praticar no lugar dos padrões do mundo. Encerram orando juntos, de mãos dadas.',
+  qs:['Que padrões herdamos que não queremos passar adiante?','O que nos impede de orar juntos com frequência?','Qual será nosso horário fixo de oração a dois?'],
+  days:['Escolham um horário fixo e orem juntos por 10 minutos.','Comecem um caderno de pedidos e respostas de oração.','Leiam Efésios 6.10-18 e orem vestindo a armadura de Deus.','Façam um culto em família.','Cada um conta o que Deus tem falado em seu devocional.','Escolham juntos uma forma de servir.','Orem pelas próximas gerações da família.'],
+  diag:['Tenho um tempo diário com Deus.','Oramos juntos como casal pelo menos uma vez por semana.','Fazemos culto ou devocional em família.','Servimos juntos na igreja ou na comunidade.','Nossa casa tem proteções claras contra o que desonra a Deus.']}
+];
+const INIT=[
+ ['Vejo nosso casamento como uma aliança diante de Deus, não como um contrato que pode ser desfeito.','Coloco meu cônjuge acima dos meus pais, amigos e trabalho.'],
+ ['Entendo e cumpro o meu papel no casamento, servindo ao outro.','As tarefas da casa e dos filhos estão divididas de forma justa entre nós.'],
+ ['Consigo falar o que sinto sem medo da reação do meu cônjuge.','Quando meu cônjuge fala, eu escuto com atenção, sem interromper.'],
+ ['Nossas discussões terminam em acordo, e não em silêncio ou gritos.','Não levamos nossas brigas para os filhos, a família ou as redes sociais.'],
+ ['Quando sou ferido, consigo perdoar sem ficar lembrando o erro depois.','Peço perdão com facilidade quando erro.'],
+ ['Temos tempo a sós, sem filhos e sem celular, pelo menos uma vez por semana.','Meu cônjuge é meu melhor amigo.'],
+ ['Estou satisfeito(a) com a nossa vida íntima e conseguimos conversar sobre ela.','Guardo meus olhos e meu coração de qualquer coisa que ameace a fidelidade.'],
+ ['Concordamos sobre regras, limites e disciplina dos filhos.','Ensinamos a Palavra de Deus aos nossos filhos em casa.'],
+ ['Sabemos quanto ganhamos, quanto gastamos e quanto devemos.','Decidimos juntos sobre o uso do dinheiro, sem esconder nada.'],
+ ['Oramos juntos como casal com frequência.','Somamos forças no serviço a Deus e na vida da igreja.']
+];
+const PACT=['Nosso casamento é uma aliança, e desistir não é opção.','Vamos servir um ao outro nos papéis que Deus nos deu.','Vamos falar a verdade em amor e ouvir antes de responder.','Vamos discordar sem desrespeitar e não dormir brigados.','Vamos perdoar como fomos perdoados, sem trazer de volta o que foi perdoado.','Vamos guardar tempo para nossa amizade e nosso romance.','Vamos proteger nossa intimidade e a pureza da nossa casa.','Vamos criar nossos filhos no caminho do Senhor, unidos.','Vamos administrar juntos, sem segredos, o que Deus nos confiou.','Vamos orar juntos e servir ao Senhor com a nossa casa.'];
+
+/* ---------- trilhas de 30 dias (material do curso) ---------- */
+const TR={
+ cura:{n:'Restauração e Cura',band:'41 a 60 pontos · zona de alerta',c:'var(--bad)',
+  obj:'O relacionamento enfrenta desgastes: mágoas acumuladas, comunicação defensiva, desconfiança ou frieza. Esta trilha convida a desarmar os conflitos e aplicar o perdão que liberta.',
+  foco:'Desarmar a fala, suspender acusações, confessar erros, restaurar a transparência e buscar aconselhamento.',
+  w:[['Desarmamento de conflitos e controle da língua',[
+   ['Pausa e respiração','Não responder na hora da raiva; pedir 5 minutos para se acalmar.','Provérbios 15.1'],
+   ['O problema, não a pessoa','Ao discordar, falar só do fato, sem rótulos, xingamentos ou ironia.','Efésios 4.29'],
+   ['Suspensão do histórico','Proibido trazer erros do passado nas discussões do dia a dia.','1 Coríntios 13.5'],
+   ['Escuta sem defesa','Ouvir uma insatisfação do cônjuge por 5 minutos sem interromper, justificar ou contra-atacar.','Tiago 1.19'],
+   ['Fim do tom ríspido','Vigiar o tom de voz o dia todo e usar “por favor” e “obrigado”.','Colossenses 4.6'],
+   ['Carta de desarmamento','Escrever uma carta curta reconhecendo uma atitude ríspida recente e pedindo desculpas.','Provérbios 28.13'],
+   ['Oração de paz','Orar em silêncio, de mãos dadas, por 2 minutos, pedindo a Deus que guarde os lábios dos dois.','Salmo 141.3']]],
+  ['Quebra da amargura e exercício do perdão',[
+   ['Mapa das feridas','Anotar as mágoas que ainda doem e entregá-las a Deus, uma por uma.','Salmo 147.3'],
+   ['Confissão individual','Pedir perdão por uma falha sua sem dizer “mas você também errou”.','Tiago 5.16'],
+   ['Escolha de perdoar','Dizer ao cônjuge: “Eu decido perdoar você por [...] e não cobrar mais”.','Colossenses 3.13'],
+   ['Fim do silêncio punitivo','Nada de ficar dias sem falar: retomar o diálogo no mesmo dia.','Efésios 4.26'],
+   ['Símbolo da limpeza','Escrever uma ofensa antiga já perdoada e rasgar o papel juntos, em oração.','Isaías 43.25'],
+   ['Palavras de encorajamento','Trocar uma crítica que você faria por uma palavra de ânimo.','Tiago 3.9-10'],
+   ['Revisão da semana do perdão','Conversar sobre o alívio sentido ao liberar e pedir perdão.','Mateus 18.21-22']]],
+  ['Restauração da transparência e da segurança',[
+   ['Aliança de transparência total','Compartilhar senhas, rotinas e conversas; nenhuma zona de sombra.','João 8.32'],
+   ['Check-in da verdade','Perguntar no fim do dia: “Fiz algo hoje que fez você se sentir inseguro(a)?”','Efésios 4.25'],
+   ['Transparência financeira','Abrir todas as contas, dívidas e ganhos e fazer um plano juntos.','Lucas 16.10'],
+   ['Proteção contra tentações','Combinar limites claros para redes sociais e amizades.','1 Tessalonicenses 5.22'],
+   ['Cumprir promessas','Cumprir um compromisso simples assumido no dia (horário, favor).','Mateus 5.37'],
+   ['Kit de emergência de conflito','Combinar uma palavra-chave para uma pausa de 10 minutos quando a discussão esquentar.','Provérbios 17.14'],
+   ['Oração pela casa','Orar juntos por cada cômodo da casa, consagrando a paz da família a Deus.','Salmo 127.1']]],
+  ['Reconstrução do afeto e apoio pastoral',[
+   ['Toque de conexão','Um abraço de 1 minuto e mãos dadas numa caminhada ou oração.','Cânticos 2.6'],
+   ['Memórias felizes','Rever juntos fotos e histórias do namoro e do casamento.','Filipenses 4.8'],
+   ['Serviço com humildade','Servir um café ou fazer um carinho sem esperar nada em troca.','Filipenses 2.3'],
+   ['Mentoria pastoral','Agendar uma conversa com os pastores ou mentores do curso.','Provérbios 15.22'],
+   ['Culto de recomeço','Um momento de adoração em casa, declarando que Cristo é o Senhor do lar.','Mateus 7.24'],
+   ['Carta do futuro','Escrever ao cônjuge por que você escolheu lutar pelo casamento.','Jeremias 29.11'],
+   ['Renovação dos votos','De joelhos e de mãos dadas, repetir os votos de fidelidade “na saúde e na crise”.','Eclesiastes 4.12'],
+   ['Novo diagnóstico','Refazer o diagnóstico de 20 perguntas e ver onde a nota melhorou.','2 Coríntios 13.5'],
+   ['Celebração do recomeço','Uma refeição especial em casa para celebrar a restauração e agradecer a Deus.','Salmo 126.3']]]]},
+ ajuste:{n:'Reconexão e Ajuste',band:'61 a 80 pontos · nível moderado',c:'var(--warn)',
+  obj:'Há amor e boa vontade, mas existem ruídos na comunicação, desatenção na vida devocional ou desequilíbrios de rotina. Esta trilha alinha a prática diária aos princípios da aliança.',
+  foco:'Escuta empática, oração a dois, equilíbrio de tempo e telas, e fim dos atritos do dia a dia.',
+  w:[['Atenção e comunicação sem ruídos',[
+   ['Roda da escuta','15 minutos ouvindo o cônjuge sem interromper, se defender ou dar conselhos apressados.','Tiago 1.19'],
+   ['Desconexão de telas','Celular e TV desligados 1 hora antes de dormir, para conversar sobre o dia.','Eclesiastes 3.1'],
+   ['Maratona de elogios','Três elogios sinceros ao longo do dia.','Provérbios 16.24'],
+   ['Fala sem rispidez','Nada de ironia ou tom ríspido ao pedir algo ou apontar uma falha.','Provérbios 15.1'],
+   ['Atenção focada','Parar o que está fazendo e olhar nos olhos quando o outro falar.','Provérbios 18.13'],
+   ['Bilhete de gratidão','Um bilhete à mão agradecendo algo específico que o cônjuge fez.','1 Tessalonicenses 5.18'],
+   ['Checagem de ruídos','10 minutos de conversa sobre o que funcionou bem na comunicação da semana.','Amós 3.3']]],
+  ['Altar conjugal e vida espiritual',[
+   ['Oração a dois','5 minutos de oração juntos antes de dormir, agradecendo pelo casamento e pela família.','Mateus 18.19'],
+   ['Leitura conjunta','Ler juntos um capítulo de Provérbios ou Salmos e escolher um versículo para a semana.','Salmo 119.105'],
+   ['Culto no lar','20 minutos com a família: um louvor, a Bíblia e uma oração abençoando a casa.','Josué 24.15'],
+   ['Jejum de consagração','Um jejum parcial (uma refeição) entregando a Deus os projetos do casal.','Josué 3.5'],
+   ['Versículo âncora','Escrever um versículo e fixar na geladeira ou no espelho.','Deuteronômio 6.9'],
+   ['Bênção falada','Orar em voz alta abençoando a vida e o dia de trabalho do cônjuge.','Números 6.24-26'],
+   ['Avaliação do altar','Rever a rotina devocional e ajustar horários para manter a constância.','Lamentações 3.22-23']]],
+  ['Mordomia, tempo a sós e serviço',[
+   ['Transparência no orçamento','Revisar juntos os gastos do mês, alinhando prioridades, dízimos e metas.','Provérbios 3.9-10'],
+   ['Corte de desperdícios','Escolher juntos 2 gastos desnecessários e mandar esse valor para a poupança.','Provérbios 21.20'],
+   ['Noite do namoro','Um passeio simples ou jantar a sós, fora da rotina.','Eclesiastes 9.9'],
+   ['Gesto de serviço','Fazer uma tarefa da casa que normalmente cabe ao outro.','Gálatas 5.13'],
+   ['Cuidado com a aparência','Arrumar-se e perfumar-se para o cônjuge num dia comum.','Cânticos 4.10'],
+   ['Lazer juntos','30 minutos de caminhada, atividade física ou hobby a dois.','Provérbios 17.22'],
+   ['Agenda alinhada','Organizar a próxima semana garantindo um tempo só do casal.','Efésios 5.15-16']]],
+  ['Perdão preventivo, papéis e acordo de futuro',[
+   ['Limpeza dos atritos','Pedir perdão na hora por qualquer impaciência ou palavra dura do dia.','Efésios 4.26'],
+   ['Tarefas divididas','Conversar sobre a rotina da casa e redistribuir tarefas para ninguém ficar sobrecarregado.','Gálatas 6.2'],
+   ['Conversa sobre os filhos','Combinar regras e limites para os filhos, falando a mesma língua diante deles.','Efésios 6.4'],
+   ['Família estendida','Evitar críticas aos parentes do cônjuge e orar juntos por eles.','Êxodo 20.12'],
+   ['Ceia da aliança','Pão e suco em casa, renovando o compromisso de amor.','1 Coríntios 11.23-26'],
+   ['Declaração de apreço','Escrever cinco qualidades do caráter do cônjuge e ler para ele.','Provérbios 31.28-29'],
+   ['Carta de sonhos','Definir juntos 3 alvos materiais e espirituais para os próximos anos.','Habacuque 2.2'],
+   ['Novo diagnóstico','Refazer o diagnóstico de 20 perguntas para ver o que evoluiu no mês.','2 Coríntios 13.5'],
+   ['Jantar de celebração','Celebrar o fim da trilha com uma oração de gratidão e renovação da aliança.','Salmo 118.24']]]]},
+ legado:{n:'Excelência e Legado',band:'81 a 100 pontos · aliança sólida',c:'var(--good)',
+  obj:'A aliança está alinhada aos princípios bíblicos, mas o casamento cristão é uma jornada contínua. Esta trilha pole os detalhes, combate a rotina, aprofunda a intimidade espiritual e prepara o casal para abençoar outras famílias.',
+  foco:'Intimidade espiritual, criatividade no afeto, transparência e um legado que inspire outros casais (Provérbios 27.17).',
+  w:[['Intimidade espiritual e altar doméstico',[
+   ['Oração de concordância','Orar de mãos dadas por 5 a 10 minutos, intercedendo pelos desejos mais profundos do cônjuge.','Mateus 18.19'],
+   ['Leitura bíblica viva','Ler juntos um capítulo (por exemplo, Filipenses 2) e tirar uma aplicação para o lar.','Salmo 119.105'],
+   ['Culto no lar','Conduzir um momento de adoração, Palavra e bênção sobre a casa e os filhos.','Josué 24.15'],
+   ['Jejum de aliança','Um jejum parcial juntos, consagrando a proteção e o propósito da família.','Josué 3.5'],
+   ['Carta de oração','Escrever ao cônjuge exatamente o que você pediu a Deus por ele hoje.','1 Tessalonicenses 5.11'],
+   ['Ceia de aliança','Um momento reservado com pão e suco, renovando votos e perdão.','1 Coríntios 11.23-26'],
+   ['Avaliação espiritual','Conversar sobre como avançar ainda mais na oração e no devocional a dois.','Amós 3.3']]],
+  ['Linguagens de afeto e intimidade renovada',[
+   ['Maratona de elogios','Cinco elogios sinceros e específicos sobre qualidades do cônjuge.','Provérbios 25.11'],
+   ['Bilhetes escondidos','Bilhetes de admiração em lugares surpresa: carro, espelho, bolsa.','Cânticos 4.7'],
+   ['Toque sem pressa','Abraços longos e carinho sem expectativa sexual, só afeto.','1 Coríntios 7.3'],
+   ['Noite do namoro','Um passeio a sós, sem celulares, para conversar e se divertir.','Eclesiastes 9.9'],
+   ['Zelo pelo leito','Caprichar na roupa, no perfume e no ambiente para a intimidade.','Hebreus 13.4'],
+   ['Aconchego depois','Carinho, conversa tranquila e valorização depois da intimidade.','Cânticos 2.6'],
+   ['Caixa de gratidão','Criar um pote em casa para guardar bilhetes com momentos felizes do casal.','1 Tessalonicenses 5.18']]],
+  ['Comunicação, mordomia e tempo',[
+   ['Escuta ativa','20 minutos ouvindo os projetos do cônjuge sem interromper nem se defender.','Tiago 1.19'],
+   ['Transparência radical','Revisar senhas, agendas e projetos: nenhuma zona de sombra na casa.','Efésios 4.25'],
+   ['Mordomia e dízimo','Alinhar o orçamento do mês, priorizando fidelidade e generosidade.','Provérbios 3.9-10'],
+   ['Desconexão digital','TV e celulares desligados 1 hora antes de dormir.','Eclesiastes 3.1'],
+   ['Serviço espontâneo','Surpreender fazendo uma tarefa que normalmente caberia ao outro.','Gálatas 5.13'],
+   ['Perdão preventivo','Nenhum ruído do dia fica sem conversa e reconciliação antes de dormir.','Efésios 4.26'],
+   ['Tempo bem usado','Garantir que o tempo do casal e o devocional fiquem no topo das prioridades.','Efésios 5.15-16']]],
+  ['Propósito familiar e legado',[
+   ['Declaração de propósito','Escrever juntos os valores e as metas de fé da família.','Habacuque 2.2'],
+   ['Semente nos filhos','Declarar bênção, identidade bíblica e futuro sobre os filhos.','Deuteronômio 6.6-7'],
+   ['Oferta generosa','Separar juntos um recurso ou cesta para abençoar uma família necessitada.','2 Coríntios 9.7'],
+   ['Mentoria de casal','Convidar um casal mais jovem para um café e contar como venceram as crises.','Tito 2.3-5'],
+   ['Hospitalidade','Receber irmãos em casa para uma refeição, comunhão e oração.','Hebreus 13.2'],
+   ['Linha do tempo das vitórias','Registrar os momentos difíceis que o casal já venceu com Deus.','1 Samuel 7.12'],
+   ['Renovação no lar','Fazer juntos uma melhoria na casa: organizar um ambiente, cuidar do jardim.','Provérbios 24.3-4'],
+   ['Novo diagnóstico','Refazer o diagnóstico de 20 perguntas para medir o progresso do mês.','2 Coríntios 13.5'],
+   ['Voto de permanência','Um jantar festivo a dois, com oração de gratidão, selando o compromisso.','Eclesiastes 4.12']]]]}
+};
+const TR_ORDER=['cura','ajuste','legado'];
+function trailFor(t){return t>=81?'legado':t>=61?'ajuste':'cura'}
+const PREP=['Escolhemos um horário em que todos possam estar','Avisamos a família com antecedência','Escolhemos o texto bíblico do dia','Celulares no silencioso, longe da mesa','Um lugar calmo, com Bíblia, papel e caneta','Uma música de louvor tocando ao fundo','Resolvemos qualquer tensão do dia antes de começar','Oramos: “Senhor, este tempo é teu. Fala conosco.”'];
+const ORDEM=['Louvor: uma ou duas músicas','Palavra: leitura curta e uma pergunta para todos','Partilha: cada um diz algo pelo qual é grato','Oração: pedidos da família e bênção sobre a casa'];
+
+/* ---------- estado ---------- */
+const KEY='somos-um-v1';
+let S; try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){S=null}
+if(!S)S={diag:{ele:{},ela:{}},snap:{inicial:null,final:null},les:{},pact:{ok:[],ele:'',ela:'',data:'',sealed:false}};
+if(!S.trail)S.trail={key:null,days:[],start:''};
+if(!S.dia)S.dia={tab:'oracao',oracao:[],gratidao:[],cultos:[],prep:[]};
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const br=d=>d?d.split('-').reverse().join('/'):'';
+const les=i=>S.les[i]||(S.les[i]={days:[],ele:{},ela:{},notes:''});
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+let tt;function toast(t){const el=$('toast');el.textContent=t;el.hidden=false;clearTimeout(tt);tt=setTimeout(()=>el.hidden=true,2600)}
+
+/* ---------- cálculos ---------- */
+function areaScores(d){return INIT.map((_,a)=>{const e=[0,1].map(k=>d.ele[a+'-'+k]),f=[0,1].map(k=>d.ela[a+'-'+k]);return {ele:e.every(Boolean)?e[0]+e[1]:null,ela:f.every(Boolean)?f[0]+f[1]:null}})}
+function lvl(p){return p>=9?['Área forte','good']:p>=7?['Área saudável','good']:p>=5?['Atenção','warn']:['Área ferida','bad']}
+function lesProgress(i){const l=les(i);const d=l.days.length/7;const g=Object.keys(l.ele).length+Object.keys(l.ela).length;return {days:l.days.length,diagDone:g>=10,pct:Math.round((l.days.length+(g>=10?3:g*0.3))/10*100)}}
+function lesScore(i){const l=les(i);const se=Object.values(l.ele),sa=Object.values(l.ela);return {ele:se.length===5?se.reduce((a,b)=>a+b,0):null,ela:sa.length===5?sa.reduce((a,b)=>a+b,0):null}}
+function lesVerdict(s){return s>=21?['Área firme','v-good']:s>=15?['Precisa de cuidado','v-warn']:['Procurem os líderes do curso','v-bad']}
+
+/* ---------- componentes ---------- */
+function seg(name,val,who){
+  return `<div class="seg ${who}" role="group" aria-label="Nota ${who==='ele'?'dele':'dela'}"><span>${who==='ele'?'Ele':'Ela'}</span>${[1,2,3,4,5].map(n=>`<button type="button" data-seg="${name}" data-who="${who}" data-v="${n}" aria-pressed="${val===n}">${n}</button>`).join('')}</div>`;
+}
+
+/* ---------- views ---------- */
+function vInicio(){
+  const prog=L.map((_,i)=>lesProgress(i)), total=Math.round(prog.reduce((a,p)=>a+Math.min(100,p.pct),0)/10);
+  const next=L.findIndex((_,i)=>prog[i].pct<100);
+  const hasDiag=!!S.snap.inicial;
+  return `<section class="hero panel">
+    <div><h1>Bem-vindos ao Somos Um</h1>
+    <p class="lead" style="margin-bottom:12px">Dez encontros para reformar a casa: do alicerce ao telhado. Façam cada passo juntos, no mesmo celular.</p>
+    <div class="row"><a class="btn" href="${hasDiag?(next<0?'#alianca':'#licao-'+(next+1)):'#diagnostico'}">${hasDiag?(next<0?'Firmar nossa aliança':'Continuar: Lição '+(next+1)):'Começar pelo diagnóstico'}</a></div></div>
+    <div><h3>Nosso progresso</h3><div class="progress"><i style="width:${total}%"></i></div><p class="hint" style="margin:0">${total}% do curso concluído · ${prog.filter(p=>p.pct>=100).length} de 10 lições completas</p>
+    <p class="hint">Diagnóstico inicial: <b>${hasDiag?'feito':'ainda não'}</b> · Diagnóstico final: <b>${S.snap.final?'feito':'ainda não'}</b></p></div>
+  </section>
+  <h2>A jornada da casa</h2>
+  <div class="journey">${L.map((l,i)=>`<a class="lcard ${prog[i].pct>=100?'done':''}" style="--c:${PH[l.ph].c}" href="#licao-${i+1}"><small>Lição ${i+1}${prog[i].pct>=100?' · concluída':''}</small><b>${l.t}</b><div class="mini"><i style="width:${Math.min(100,prog[i].pct)}%"></i></div></a>`).join('')}</div>
+  <div class="legend">${PH.map(p=>`<span style="--c:${p.c}"><i></i>${p.n}</span>`).join('')}</div>
+  ${(()=>{const t=totals(S.snap.inicial||S.diag);if(!t)return '';const k=S.trail.key||trailFor(Math.min(t.ele,t.ela));const d=S.trail.key===k?S.trail.days.length:0;return `<div class="panel" style="margin-top:18px;border-top:4px solid ${TR[k].c}"><h3>Trilha de 30 dias: ${TR[k].n}</h3><div class="progress"><i style="width:${d/30*100}%;background:${TR[k].c}"></i></div><p class="hint" style="margin:0 0 10px">${d} de 30 dias concluídos</p><a class="btn small" href="#trilha">Abrir a trilha</a></div>`})()}
+  <div class="panel tool" style="margin-top:18px"><h3>Ferramenta Mordomia a Dois</h3><p class="hint" style="margin:0 0 10px">Diagnóstico financeiro, plano de quitação de dívidas, sonhos, investimentos e grandes compras. Usada na Lição 9.</p><a class="btn small ghost" href="${MORDOMIA}">Abrir a ferramenta</a></div>`;
+}
+function vDiag(){
+  const sc=areaScores(S.diag);
+  const complete=sc.every(s=>s.ele!=null&&s.ela!=null);
+  const tE=sc.reduce((a,s)=>a+(s.ele||0),0), tA=sc.reduce((a,s)=>a+(s.ela||0),0);
+  const res=sc.map((s,a)=>{const diff=s.ele!=null&&s.ela!=null&&Math.abs(s.ele-s.ela)>=3;const lo=Math.min(s.ele??10,s.ela??10);const lv=lvl(lo);
+    return `<div class="rrow"><span>${a+1}. ${L[a].t}${diff?' <span class="chip warn" title="Diferença de 3 pontos ou mais">conversem</span>':''}</span><div class="bars"><div class="bar ele"><i style="width:${(s.ele||0)*10}%"></i></div><div class="bar ela"><i style="width:${(s.ela||0)*10}%"></i></div></div><b class="${lv[1]}">${s.ele??'–'} / ${s.ela??'–'}</b></div>`}).join('');
+  let cmp='';
+  if(S.snap.inicial&&S.snap.final){const a=areaScores(S.snap.inicial),b=areaScores(S.snap.final);
+    cmp=`<div class="panel"><h3>Antes e depois do curso</h3><div style="overflow-x:auto"><table class="dt"><thead><tr><th>Área</th><th style="text-align:right">Ele antes</th><th style="text-align:right">Ele depois</th><th style="text-align:right">Ela antes</th><th style="text-align:right">Ela depois</th></tr></thead><tbody>${a.map((x,i)=>{const d1=(b[i].ele||0)-(x.ele||0),d2=(b[i].ela||0)-(x.ela||0);return `<tr><td>${L[i].t}</td><td class="n">${x.ele??'–'}</td><td class="n ${d1>0?'good':d1<0?'bad':''}">${b[i].ele??'–'}</td><td class="n">${x.ela??'–'}</td><td class="n ${d2>0?'good':d2<0?'bad':''}">${b[i].ela??'–'}</td></tr>`}).join('')}</tbody></table></div></div>`;}
+  return `<h1>Diagnóstico do casal</h1>
+  <p class="lead">Cada um responde sozinho, sem olhar a nota do outro. Depois, vejam o resultado juntos e conversem. 1 = nunca · 2 = poucas vezes · 3 = às vezes · 4 = muitas vezes · 5 = sempre.</p>
+  <div class="grid2">
+   <div class="panel" style="grid-column:1/-1">${INIT.map((pair,a)=>pair.map((q,k)=>`<div class="q"><div><div class="area">${a+1}. ${L[a].t}</div><p>${q}</p></div>${seg('d-'+a+'-'+k,S.diag.ele[a+'-'+k],'ele')}${seg('d-'+a+'-'+k,S.diag.ela[a+'-'+k],'ela')}</div>`).join('')).join('')}</div>
+  </div>
+  <div class="panel"><h3>Resultado por área</h3>
+   <div class="keyl"><span><i style="background:var(--primary)"></i>Ele</span><span><i style="background:var(--accent)"></i>Ela</span><span>cada área vai de 2 a 10</span></div>
+   <div class="res">${res}</div>
+   <p class="hint" style="margin-top:14px">Total: <b>ele ${tE}</b> · <b>ela ${tA}</b> (de 20 a 100). 9 a 10 área forte · 7 a 8 saudável · 5 a 6 atenção · 2 a 4 área ferida, procurem os líderes do curso.</p>
+   ${complete?`<p style="margin:8px 0">Trilha de 30 dias indicada: <b>${TR[trailFor(Math.min(tE,tA))].n}</b> <a href="#trilha" style="color:var(--primary)">ver a trilha</a></p>`:''}
+   <div class="row" style="margin-top:6px">${complete?`<button class="btn" type="button" data-snap="inicial">${S.snap.inicial?'Atualizar':'Guardar como'} diagnóstico inicial</button><button class="btn ghost" type="button" data-snap="final">Guardar como diagnóstico final</button>`:`<span class="hint">Respondam todas as frases para guardar o diagnóstico.</span>`}</div>
+  </div>${cmp}`;
+}
+function vLicoes(){
+  return `<h1>As dez lições</h1><p class="lead">Cada lição tem ensino, pesquisa, dinâmica, perguntas para o casal, sete dias de aplicação e um diagnóstico rápido.</p>
+  <div class="journey">${L.map((l,i)=>{const p=lesProgress(i);return `<a class="lcard ${p.pct>=100?'done':''}" style="--c:${PH[l.ph].c}" href="#licao-${i+1}"><small>Lição ${i+1} · ${PH[l.ph].n}</small><b>${l.t}</b><small>${p.days}/7 dias${p.diagDone?' · diagnóstico feito':''}</small><div class="mini"><i style="width:${Math.min(100,p.pct)}%"></i></div></a>`}).join('')}</div>
+  <div class="legend">${PH.map(p=>`<span style="--c:${p.c}"><i></i>${p.n}</span>`).join('')}</div>`;
+}
+function vLicao(i){
+  const l=L[i], s=les(i), sc=lesScore(i), c=PH[l.ph].c;
+  const ver=who=>{const v=sc[who];if(v==null)return '';const r=lesVerdict(v);return `<div class="verdict ${r[1]}"><b>${who==='ele'?'Ele':'Ela'}: ${v} de 25</b> · ${r[0]}</div>`};
+  return `<div class="lhead" style="--c:${c}"><span class="chip">Lição ${i+1} · ${PH[l.ph].n}</span><h1 style="margin-top:8px">${l.full}</h1><p class="verse">${l.v}<span>${l.vr}</span></p></div>
+  <div class="panel"><p style="margin-top:0;font-size:1.05rem">${l.sum}</p><ul class="points">${l.pts.map(p=>`<li>${p}</li>`).join('')}</ul>
+   <p class="research"><b>O que dizem as pesquisas:</b> ${l.res} <a href="${l.rurl}" target="_blank" rel="noopener">Fonte: ${l.rsrc} ↗</a></p></div>
+  ${l.tool?`<div class="panel tool"><h3>Ferramenta Mordomia a Dois</h3><p class="hint" style="margin:0 0 10px">Façam o diagnóstico financeiro, montem o plano de quitação dívida por dívida e escrevam os sonhos com metas mensais.</p><a class="btn" href="${MORDOMIA}">Abrir a ferramenta</a></div>`:''}
+  <div class="grid2">
+   <div class="panel"><h3>Dinâmica do encontro</h3><p style="margin:0">${l.din}</p></div>
+   <div class="panel"><h3>Para conversar a dois</h3><ul class="points" style="margin:0">${l.qs.map(q=>`<li>${q}</li>`).join('')}</ul></div>
+  </div>
+  <div class="panel"><div class="row" style="justify-content:space-between"><h3 style="margin:0">Aplicação diária: sete dias</h3><span class="hint">${s.days.length} de 7 feitos</span></div><div class="progress"><i style="width:${s.days.length/7*100}%;background:${c}"></i></div>
+   <div class="days">${l.days.map((d,k)=>`<label class="day ${s.days.includes(k)?'checked':''}"><input type="checkbox" data-day="${k}" ${s.days.includes(k)?'checked':''}><span><b>Dia ${k+1}</b>${d}</span></label>`).join('')}</div></div>
+  <div class="panel"><h3>Diagnóstico da lição</h3><p class="scale">1 = nunca · 5 = sempre. Cada um responde por si.</p>
+   ${l.diag.map((q,k)=>`<div class="q"><div><p>${q}</p></div>${seg('l-'+k,s.ele[k],'ele')}${seg('l-'+k,s.ela[k],'ela')}</div>`).join('')}
+   ${ver('ele')}${ver('ela')}</div>
+  <div class="panel"><h3>Nossas anotações</h3><textarea id="notes" placeholder="O que Deus falou conosco nesta lição, decisões que tomamos, pedidos de oração...">${esc(s.notes)}</textarea></div>
+  <div class="pager">${i>0?`<a class="btn ghost" href="#licao-${i}">← Lição ${i}: ${L[i-1].t}</a>`:'<span></span>'}${i<9?`<a class="btn" href="#licao-${i+2}">Lição ${i+2}: ${L[i+1].t} →</a>`:`<a class="btn" href="#alianca">Firmar nossa aliança →</a>`}</div>`;
+}
+function totals(d){const sc=areaScores(d);const ok=sc.every(s=>s.ele!=null&&s.ela!=null);return ok?{ele:sc.reduce((a,s)=>a+s.ele,0),ela:sc.reduce((a,s)=>a+s.ela,0)}:null}
+function vTrilha(){
+  const base=S.snap.inicial||S.diag, t=totals(base);
+  const rec=t?trailFor(Math.min(t.ele,t.ela)):null;
+  const key=S.trail.key||rec;
+  let head=`<h1>Trilha de 30 dias</h1><p class="lead">Um plano de um mês, com uma atitude por dia, escolhido pela pontuação do diagnóstico de 20 perguntas (de 20 a 100 pontos). Quando os dois têm notas diferentes, a trilha indicada segue a menor nota, para cuidar primeiro de quem está mais ferido.</p>`;
+  if(!t)return head+`<div class="panel"><p style="margin-top:0">Para indicar a trilha certa, primeiro façam o diagnóstico do casal.</p><a class="btn" href="#diagnostico">Fazer o diagnóstico</a></div>`;
+  const low=Math.min(t.ele,t.ela);
+  head+=`<div class="panel"><div class="row" style="justify-content:space-between"><span>Pontuação: <b>ele ${t.ele}</b> · <b>ela ${t.ela}</b></span><span class="hint">trilha indicada: <b>${TR[rec].n}</b></span></div></div>`;
+  if(low<=40)head+=`<div class="alert"><b>Antes de começar:</b> uma pontuação de ${low} pontos mostra um casamento muito ferido. Procurem os pastores ou líderes do curso esta semana para um acompanhamento próximo. A trilha de Restauração e Cura vai caminhar junto com esse cuidado, e não no lugar dele.</div>`;
+  const tr=TR[key], done=S.trail.key===key?S.trail.days:[];
+  let n=0;
+  return head+`<div class="tchoice">${TR_ORDER.map(k=>`<button type="button" data-trail="${k}" aria-pressed="${k===key}" style="--c:${TR[k].c}"><b>${TR[k].n}${k===rec?' · indicada':''}</b><small>${TR[k].band}</small></button>`).join('')}</div>
+  <div class="panel"><h2>${tr.n}</h2><p style="margin-top:0">${tr.obj}</p><p class="hint" style="margin:0"><b>Foco:</b> ${tr.foco}</p>
+   <div class="progress"><i style="width:${done.length/30*100}%;background:${tr.c}"></i></div><p class="hint" style="margin:0">${done.length} de 30 dias${S.trail.key===key&&S.trail.start?' · começamos em '+br(S.trail.start):''}</p></div>
+  ${tr.w.map((w,wi)=>{const start=n;const html=w[1].map((d,k)=>{const idx=start+k;return `<label class="tday ${done.includes(idx)?'checked':''}"><input type="checkbox" data-tday="${idx}" ${done.includes(idx)?'checked':''}><span><b>Dia ${idx+1}: ${d[0]}</b><p>${d[1]}</p><small>${d[2]}</small>${idx===28?` <a href="#diagnostico" style="color:var(--primary);font-size:.85rem">Abrir o diagnóstico</a>`:''}</span></label>`}).join('');n+=w[1].length;
+    return `<div class="panel week"><h3><span>Semana ${wi+1}: ${w[0]}</span><span class="hint">dias ${start+1} a ${n}</span></h3>${html}</div>`}).join('')}
+  <p class="hint">Trilhas do material de acompanhamento pastoral do curso. Ao final, refaçam o diagnóstico e vejam em quais áreas houve mais avanço.</p>`;
+}
+function vDiario(){
+  const D=S.dia, tab=D.tab;
+  const tabs=`<div class="tabs" role="tablist">${[['oracao','Pedidos de oração'],['gratidao','Caixa de gratidão'],['culto','Culto no lar']].map(([k,t])=>`<button type="button" data-dtab="${k}" aria-pressed="${tab===k}">${t}</button>`).join('')}</div>`;
+  let body='';
+  if(tab==='oracao'){
+    const ans=D.oracao.filter(p=>p.ok).length;
+    body=`<div class="panel"><h3>Novo pedido do casal</h3><div class="form"><input type="text" id="pedTxt" placeholder="Pelo que vamos orar?"><input type="date" id="pedData" value="${today()}"><button class="btn" type="button" id="pedAdd">Anotar</button></div></div>
+    <div class="panel"><h3>${D.oracao.length} pedidos · ${ans} respondidos</h3>${D.oracao.length?D.oracao.map((p,i)=>`<div class="entry ${p.ok?'answered':''}"><div><p>${esc(p.t)}</p><small>Pedido em ${br(p.d)}${p.ok?' · respondido em '+br(p.ok):''}</small></div><div class="row">${p.ok?'':`<button class="btn small ghost" type="button" data-pok="${i}">Deus respondeu</button>`}<button class="btn small ghost" type="button" data-pdel="${i}" aria-label="Apagar pedido">Apagar</button></div></div>`).join(''):'<p class="hint" style="margin:0">Ainda não há pedidos. Anotem o primeiro e, quando Deus responder, marquem a data. Com o tempo, esta lista vira um testemunho do casal.</p>'}</div>`;
+  }else if(tab==='gratidao'){
+    body=`<div class="panel"><h3>Um motivo de gratidão de hoje</h3><div class="form"><input type="text" id="grTxt" placeholder="Hoje sou grato(a) por..."><select id="grWho"><option value="Ele">Ele</option><option value="Ela">Ela</option><option value="Nós dois">Nós dois</option></select><button class="btn" type="button" id="grAdd">Guardar</button></div><p class="hint" style="margin-bottom:0">“Em tudo dai graças” (1 Tessalonicenses 5.18). Quando a semana for difícil, abram a caixa e leiam juntos.</p></div>
+    <div class="panel"><h3>${D.gratidao.length} motivos guardados</h3>${D.gratidao.length?D.gratidao.map((g,i)=>`<div class="entry"><div><p>${esc(g.t)}</p><small>${esc(g.w)} · ${br(g.d)}</small></div><button class="btn small ghost" type="button" data-gdel="${i}" aria-label="Apagar">Apagar</button></div>`).join(''):'<p class="hint" style="margin:0">A caixa está vazia. Guardem hoje o primeiro motivo.</p>'}</div>`;
+  }else{
+    body=`<div class="grid2"><div class="panel"><h3>Preparar em 5 minutos</h3>${PREP.map((p,k)=>`<label class="day ${D.prep.includes(k)?'checked':''}" style="margin-bottom:6px"><input type="checkbox" data-prep="${k}" ${D.prep.includes(k)?'checked':''}><span>${p}</span></label>`).join('')}<button class="btn small ghost" type="button" id="prepReset" style="margin-top:6px">Limpar a lista</button></div>
+    <div class="panel"><h3>Roteiro simples</h3><ol class="points">${ORDEM.map(o=>`<li>${o}</li>`).join('')}</ol><p class="hint">De 15 a 20 minutos. Melhor curto e frequente do que longo e raro.</p>
+     <h3 style="margin-top:16px">Registrar o culto de hoje</h3><input type="text" id="cuTxt" placeholder="Algo que sentimos ou aprendemos"><div class="row" style="margin-top:8px"><button class="btn" type="button" id="cuAdd">Registrar</button></div></div></div>
+    <div class="panel"><h3>${D.cultos.length} ${D.cultos.length===1?'culto em família registrado':'cultos em família registrados'}</h3>${D.cultos.length?D.cultos.map((c,i)=>`<div class="entry"><div><p>${esc(c.t||'Culto realizado')}</p><small>${br(c.d)}</small></div><button class="btn small ghost" type="button" data-cdel="${i}" aria-label="Apagar">Apagar</button></div>`).join(''):'<p class="hint" style="margin:0">Nenhum culto registrado ainda.</p>'}</div>`;
+  }
+  return `<h1>Diário do casal</h1><p class="lead">Três hábitos que sustentam a vida espiritual da casa: orar pelos mesmos pedidos, agradecer todos os dias e reunir a família diante de Deus.</p>${tabs}${body}`;
+}
+function vPacto(){
+  const p=S.pact, all=p.ok.length===PACT.length&&p.ele.trim()&&p.ela.trim();
+  if(p.sealed)return `<div class="panel sealed"><svg width="80" height="60" viewBox="0 0 40 30" aria-hidden="true"><circle cx="14" cy="15" r="10" fill="none" stroke="var(--primary)" stroke-width="3"></circle><circle cx="26" cy="15" r="10" fill="none" stroke="var(--accent)" stroke-width="3"></circle></svg>
+   <p class="seal">Somos Um</p><p>${esc(p.ele)} e ${esc(p.ela)} firmaram esta aliança${p.data?' em '+esc(p.data.split('-').reverse().join('/')):''}.</p>
+   <ol style="text-align:left;max-width:560px;margin:16px auto">${PACT.map(x=>`<li>${x}</li>`).join('')}</ol>
+   <p class="hint">“O cordão de três dobras não se rompe com facilidade” (Eclesiastes 4.12)</p>
+   <div class="row" style="justify-content:center"><a class="btn" href="#diagnostico">Fazer o diagnóstico final</a><button class="btn ghost" type="button" id="unseal">Editar a aliança</button></div></div>`;
+  return `<h1>Nossa aliança</h1><p class="lead">No último encontro, leiam juntos cada compromisso e marquem os que os dois assumem diante de Deus.</p>
+  <div class="panel"><ul class="pact">${PACT.map((x,k)=>`<li><label><input type="checkbox" data-pact="${k}" ${p.ok.includes(k)?'checked':''}><span>${x}</span></label></li>`).join('')}</ul></div>
+  <div class="panel"><div class="grid2"><label>Nome dele<input type="text" id="pele" value="${esc(p.ele)}"></label><label>Nome dela<input type="text" id="pela" value="${esc(p.ela)}"></label></div>
+   <label style="display:block;margin-top:12px">Data<input type="date" id="pdata" value="${esc(p.data)}"></label>
+   <div class="row" style="margin-top:14px"><button class="btn" type="button" id="seal" ${all?'':'disabled style="opacity:.5"'}>Firmar nossa aliança</button>${all?'':'<span class="hint">Marquem os dez compromissos e escrevam os dois nomes.</span>'}</div></div>`;
+}
+
+/* ---------- roteamento ---------- */
+function route(){
+  const h=(location.hash||'#inicio').slice(1);
+  let view='inicio',idx=-1;
+  if(/^licao-([1-9]|10)$/.test(h)){view='licao';idx=+h.split('-')[1]-1}
+  else if(['inicio','diagnostico','licoes','alianca','trilha','diario'].includes(h))view=h;
+  document.querySelectorAll('[data-nav]').forEach(a=>a.toggleAttribute('aria-current',a.dataset.nav===(view==='licao'?'licoes':view)));
+  document.querySelectorAll('[data-nav]').forEach(a=>{if(a.hasAttribute('aria-current'))a.setAttribute('aria-current','page')});
+  render(view,idx);
+}
+let cur={view:'inicio',idx:-1};
+function render(view,idx,keepScroll){
+  cur={view,idx};
+  const y=window.scrollY;
+  $('view').innerHTML=view==='diagnostico'?vDiag():view==='licoes'?vLicoes():view==='licao'?vLicao(idx):view==='alianca'?vPacto():view==='trilha'?vTrilha():view==='diario'?vDiario():vInicio();
+  bind();
+  if(keepScroll)window.scrollTo(0,y);else window.scrollTo(0,0);
+}
+function bind(){
+  document.querySelectorAll('[data-trail]').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.trail;if(S.trail.key!==k){S.trail={key:k,days:[],start:''}}save();render('trilha',-1,true)}));
+  document.querySelectorAll('[data-tday]').forEach(c=>c.addEventListener('change',()=>{
+    const t=totals(S.snap.inicial||S.diag);const k=S.trail.key||(t?trailFor(Math.min(t.ele,t.ela)):'ajuste');
+    if(S.trail.key!==k)S.trail={key:k,days:[],start:''};
+    if(!S.trail.start)S.trail.start=today();
+    const i=+c.dataset.tday;S.trail.days=S.trail.days.filter(x=>x!==i);if(c.checked)S.trail.days.push(i);save();
+    if(S.trail.days.length===30)toast('Trilha concluída! Refaçam o diagnóstico e celebrem.');
+    render('trilha',-1,true);
+  }));
+  document.querySelectorAll('[data-dtab]').forEach(b=>b.addEventListener('click',()=>{S.dia.tab=b.dataset.dtab;save();render('diario',-1,true)}));
+  const add=(btn,fn)=>{const b=$(btn);if(b)b.addEventListener('click',fn)};
+  add('pedAdd',()=>{const t=$('pedTxt').value.trim();if(!t){toast('Escrevam o pedido antes de anotar.');return}S.dia.oracao.unshift({t,d:$('pedData').value||today(),ok:''});save();render('diario',-1,true);toast('Pedido anotado.')});
+  document.querySelectorAll('[data-pok]').forEach(b=>b.addEventListener('click',()=>{S.dia.oracao[+b.dataset.pok].ok=today();save();render('diario',-1,true);toast('Glória a Deus! Resposta registrada.')}));
+  document.querySelectorAll('[data-pdel]').forEach(b=>b.addEventListener('click',()=>{S.dia.oracao.splice(+b.dataset.pdel,1);save();render('diario',-1,true)}));
+  add('grAdd',()=>{const t=$('grTxt').value.trim();if(!t){toast('Escrevam o motivo de gratidão.');return}S.dia.gratidao.unshift({t,w:$('grWho').value,d:today()});save();render('diario',-1,true);toast('Guardado na caixa de gratidão.')});
+  document.querySelectorAll('[data-gdel]').forEach(b=>b.addEventListener('click',()=>{S.dia.gratidao.splice(+b.dataset.gdel,1);save();render('diario',-1,true)}));
+  document.querySelectorAll('[data-prep]').forEach(c=>c.addEventListener('change',()=>{const k=+c.dataset.prep;S.dia.prep=S.dia.prep.filter(x=>x!==k);if(c.checked)S.dia.prep.push(k);save();render('diario',-1,true)}));
+  add('prepReset',()=>{S.dia.prep=[];save();render('diario',-1,true)});
+  add('cuAdd',()=>{S.dia.cultos.unshift({t:$('cuTxt').value.trim(),d:today()});S.dia.prep=[];save();render('diario',-1,true);toast('Culto registrado. Que Deus abençoe a casa!')});
+  document.querySelectorAll('[data-cdel]').forEach(b=>b.addEventListener('click',()=>{S.dia.cultos.splice(+b.dataset.cdel,1);save();render('diario',-1,true)}));
+  document.querySelectorAll('[data-seg]').forEach(b=>b.addEventListener('click',()=>{
+    const [kind,...rest]=b.dataset.seg.split('-'),who=b.dataset.who,v=+b.dataset.v;
+    if(kind==='d'){S.diag[who][rest.join('-')]=v}
+    else{les(cur.idx)[who][rest[0]]=v}
+    save();render(cur.view,cur.idx,true);
+  }));
+  document.querySelectorAll('[data-day]').forEach(c=>c.addEventListener('change',()=>{
+    const s=les(cur.idx),k=+c.dataset.day;s.days=s.days.filter(x=>x!==k);if(c.checked)s.days.push(k);save();
+    if(s.days.length===7)toast('Sete dias concluídos. Que alegria!');
+    render(cur.view,cur.idx,true);
+  }));
+  const n=$('notes');if(n)n.addEventListener('input',()=>{les(cur.idx).notes=n.value;save()});
+  document.querySelectorAll('[data-snap]').forEach(b=>b.addEventListener('click',()=>{
+    S.snap[b.dataset.snap]=JSON.parse(JSON.stringify(S.diag));save();
+    toast(b.dataset.snap==='inicial'?'Diagnóstico inicial guardado.':'Diagnóstico final guardado. Vejam a comparação abaixo.');
+    render(cur.view,cur.idx,true);
+  }));
+  document.querySelectorAll('[data-pact]').forEach(c=>c.addEventListener('change',()=>{const k=+c.dataset.pact;S.pact.ok=S.pact.ok.filter(x=>x!==k);if(c.checked)S.pact.ok.push(k);save();render('alianca',-1,true)}));
+  [['pele','ele'],['pela','ela'],['pdata','data']].forEach(([id,k])=>{const el=$(id);if(el)el.addEventListener('change',()=>{S.pact[k]=el.value;save();render('alianca',-1,true)})});
+  const sb=$('seal');if(sb)sb.addEventListener('click',()=>{if(sb.disabled)return;S.pact.sealed=true;save();render('alianca',-1);toast('Aliança firmada!')});
+  const ub=$('unseal');if(ub)ub.addEventListener('click',()=>{S.pact.sealed=false;save();render('alianca',-1)});
+}
+window.addEventListener('hashchange',route);
+route();
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "name": "Somos Um · Curso de Casais",
+  "short_name": "Somos Um",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#F3F4F8",
+  "theme_color": "#2B3A67",
+  "lang": "pt-BR",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
