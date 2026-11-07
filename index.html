@@ -524,6 +524,35 @@ function vInicio(){
   ${(()=>{const t=totals(S.snap.inicial||S.diag);if(!t)return '';const k=S.trail.key||trailFor(Math.min(t.ele,t.ela));const d=S.trail.key===k?S.trail.days.length:0;return `<div class="panel" style="margin-top:18px;border-top:4px solid ${TR[k].c}"><h3>Trilha de 30 dias: ${TR[k].n}</h3><div class="progress"><i style="width:${d/30*100}%;background:${TR[k].c}"></i></div><p class="hint" style="margin:0 0 10px">${d} de 30 dias concluídos</p><a class="btn small" href="#trilha">Abrir a trilha</a></div>`})()}
   <div class="panel tool" style="margin-top:18px"><h3>Ferramenta Mordomia a Dois</h3><p class="hint" style="margin:0 0 10px">Diagnóstico financeiro, plano de quitação de dívidas, sonhos, investimentos e grandes compras. Usada na Lição 9.</p><a class="btn small ghost" href="${MORDOMIA}">Abrir a ferramenta</a></div>`;
 }
+function shareText(sc,tE,tA){
+  const nome=(S.casal||'').trim();
+  const d=new Date(), dt=String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear();
+  const low=sc.map((s,a)=>({a,v:Math.min(s.ele,s.ela)})).sort((x,y)=>x.v-y.v).filter(x=>x.v<=6).slice(0,3);
+  const done=L.filter((_,i)=>lesProgress(i).pct>=100).length;
+  const tk=S.trail.key, td=tk?S.trail.days.length:0;
+  return ['*Somos Um · Diagnóstico do casal*'+(nome?' '+nome:''),
+    'Data: '+dt,
+    'Total: ele '+tE+' · ela '+tA+' (de 20 a 100)',
+    'Trilha de 30 dias indicada: '+TR[trailFor(Math.min(tE,tA))].n,
+    '',
+    'Notas por área (ele / ela, de 2 a 10):',
+    ...sc.map((s,a)=>(a+1)+'. '+L[a].t+': '+s.ele+' / '+s.ela+(Math.abs(s.ele-s.ela)>=3?' (diferença grande)':'')),
+    '',
+    'Precisamos de mais ajuda em: '+(low.length?low.map(x=>L[x.a].t).join(', '):'nenhuma área abaixo de 7 pontos'),
+    'Progresso: '+done+' de 10 lições concluídas'+(tk?' · trilha '+td+' de 30 dias':''),
+    '',
+    'Enviado pelo próprio casal pelo app Somos Um.'].join('\n');
+}
+function vShare(sc,tE,tA){
+  const t=shareText(sc,tE,tA);
+  return `<div class="panel"><h3>Compartilhar com o líder</h3>
+   <p class="hint" style="margin-top:0">Ninguém vê as notas de vocês. Se quiserem que o casal líder ou o pastor ajude nas áreas mais difíceis, enviem este resumo. É escolha de vocês, e dá para apagar no texto qualquer linha que preferirem não enviar.</p>
+   <label for="casal" class="hint">Nome do casal (opcional)</label>
+   <input type="text" id="casal" placeholder="Ex.: João e Maria" value="${esc(S.casal||'')}" style="margin:4px 0 10px">
+   <textarea id="shareTxt" style="min-height:200px;font-size:.88rem">${esc(t)}</textarea>
+   <div class="row" style="margin-top:10px"><button class="btn" type="button" id="shareCopy">Copiar resumo para o líder</button><a class="btn ghost" id="shareWa" href="https://wa.me/?text=${encodeURIComponent(t)}" target="_blank" rel="noopener">Enviar pelo WhatsApp</a></div>
+   <p class="hint" style="margin-bottom:0">Depois de copiar, abram a conversa com o líder no WhatsApp, toquem e segurem na caixa de mensagem e escolham Colar.</p></div>`;
+}
 function vDiag(){
   const sc=areaScores(S.diag);
   const complete=sc.every(s=>s.ele!=null&&s.ela!=null);
@@ -544,7 +573,7 @@ function vDiag(){
    <p class="hint" style="margin-top:14px">Total: <b>ele ${tE}</b> · <b>ela ${tA}</b> (de 20 a 100). 9 a 10 área forte · 7 a 8 saudável · 5 a 6 atenção · 2 a 4 área ferida, procurem os líderes do curso.</p>
    ${complete?`<p style="margin:8px 0">Trilha de 30 dias indicada: <b>${TR[trailFor(Math.min(tE,tA))].n}</b> <a href="#trilha" style="color:var(--primary)">ver a trilha</a></p>`:''}
    <div class="row" style="margin-top:6px">${complete?`<button class="btn" type="button" data-snap="inicial">${S.snap.inicial?'Atualizar':'Guardar como'} diagnóstico inicial</button><button class="btn ghost" type="button" data-snap="final">Guardar como diagnóstico final</button>`:`<span class="hint">Respondam todas as frases para guardar o diagnóstico.</span>`}</div>
-  </div>${cmp}`;
+  </div>${complete?vShare(sc,tE,tA):''}${cmp}`;
 }
 function vLicoes(){
   return `<h1>As dez lições</h1><p class="lead">Cada lição tem ensino, pesquisa, dinâmica, perguntas para o casal, sete dias de aplicação e um diagnóstico rápido.</p>
@@ -636,6 +665,9 @@ function render(view,idx,keepScroll){
   if(keepScroll)window.scrollTo(0,y);else window.scrollTo(0,0);
 }
 function bind(){
+  const sc0=$('shareCopy');if(sc0)sc0.addEventListener('click',()=>{const ta=$('shareTxt');const ok=()=>toast('Resumo copiado. Agora é só colar no WhatsApp do líder.');const fb=()=>{ta.focus();ta.select();toast('Toque e segure no texto selecionado e escolha Copiar.')};try{navigator.clipboard.writeText(ta.value).then(ok,fb)}catch(e){fb()}});
+  const st=$('shareTxt');if(st)st.addEventListener('input',()=>{$('shareWa').href='https://wa.me/?text='+encodeURIComponent(st.value)});
+  const cs=$('casal');if(cs)cs.addEventListener('change',()=>{S.casal=cs.value;save();render(cur.view,cur.idx,true)});
   document.querySelectorAll('[data-trail]').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.trail;if(S.trail.key!==k){S.trail={key:k,days:[],start:''}}save();render('trilha',-1,true)}));
   document.querySelectorAll('[data-tday]').forEach(c=>c.addEventListener('change',()=>{
     const t=totals(S.snap.inicial||S.diag);const k=S.trail.key||(t?trailFor(Math.min(t.ele,t.ela)):'ajuste');
