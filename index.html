@@ -176,6 +176,10 @@ select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(-
 .dlist li{margin-bottom:6px}
 .dlist .dcheck{list-style:"☐  "}
 .dnote{margin:0 0 16px;padding:12px 14px;border-radius:10px;background:color-mix(in srgb,var(--bad) 10%,var(--surface));border:1px solid var(--bad);font-size:.93rem}
+.turn{border-radius:12px;padding:12px 14px;margin-bottom:12px;background:color-mix(in srgb,var(--primary) 12%,var(--surface));border:1px solid var(--primary)}
+.turn.ela{background:color-mix(in srgb,var(--accent) 14%,var(--surface));border-color:var(--accent)}
+.confirm{margin-top:12px;padding:12px 14px;border-radius:10px;background:color-mix(in srgb,var(--bad) 10%,var(--surface));border:1px solid var(--bad);display:grid;gap:10px;font-size:.92rem}
+.linkbtn{font:inherit;font-size:.88rem;background:none;border:0;padding:4px 0;color:var(--muted);text-decoration:underline;cursor:pointer}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-size:.9rem;z-index:20}
 .note{font-size:.8rem;color:var(--muted);margin-top:28px;max-width:70ch}
 @media (prefers-reduced-motion:no-preference){.bar i,.progress i,.mini i{transition:width .35s ease}}
@@ -522,7 +526,8 @@ function vInicio(){
   <div class="journey">${L.map((l,i)=>`<a class="lcard ${prog[i].pct>=100?'done':''}" style="--c:${PH[l.ph].c}" href="#licao-${i+1}"><small>Lição ${i+1}${prog[i].pct>=100?' · concluída':''}</small><b>${l.t}</b><div class="mini"><i style="width:${Math.min(100,prog[i].pct)}%"></i></div></a>`).join('')}</div>
   <div class="legend">${PH.map(p=>`<span style="--c:${p.c}"><i></i>${p.n}</span>`).join('')}</div>
   ${(()=>{const t=totals(S.snap.inicial||S.diag);if(!t)return '';const k=S.trail.key||trailFor(Math.min(t.ele,t.ela));const d=S.trail.key===k?S.trail.days.length:0;return `<div class="panel" style="margin-top:18px;border-top:4px solid ${TR[k].c}"><h3>Trilha de 30 dias: ${TR[k].n}</h3><div class="progress"><i style="width:${d/30*100}%;background:${TR[k].c}"></i></div><p class="hint" style="margin:0 0 10px">${d} de 30 dias concluídos</p><a class="btn small" href="#trilha">Abrir a trilha</a></div>`})()}
-  <div class="panel tool" style="margin-top:18px"><h3>Ferramenta Mordomia a Dois</h3><p class="hint" style="margin:0 0 10px">Diagnóstico financeiro, plano de quitação de dívidas, sonhos, investimentos e grandes compras. Usada na Lição 9.</p><a class="btn small ghost" href="${MORDOMIA}">Abrir a ferramenta</a></div>`;
+  <div class="panel tool" style="margin-top:18px"><h3>Ferramenta Mordomia a Dois</h3><p class="hint" style="margin:0 0 10px">Diagnóstico financeiro, plano de quitação de dívidas, sonhos, investimentos e grandes compras. Usada na Lição 9.</p><a class="btn small ghost" href="${MORDOMIA}">Abrir a ferramenta</a></div>
+  ${clearAsk==='all'?`<div class="confirm"><span>Apagar <b>todos</b> os dados do Somos Um neste celular: diagnósticos, lições, trilha, diário e aliança? Não dá para desfazer.</span><div class="row"><button class="btn small" type="button" id="allYes">Sim, apagar tudo</button><button class="btn small ghost" type="button" id="allNo">Cancelar</button></div></div>`:'<p style="margin-top:24px"><button class="linkbtn" type="button" id="allClear">Apagar todos os dados deste celular</button></p>'}`;
 }
 function shareText(sc,tE,tA){
   const nome=(S.casal||'').trim();
@@ -553,27 +558,39 @@ function vShare(sc,tE,tA){
    <div class="row" style="margin-top:10px"><button class="btn" type="button" id="shareCopy">Copiar resumo para o líder</button><a class="btn ghost" id="shareWa" href="https://wa.me/?text=${encodeURIComponent(t)}" target="_blank" rel="noopener">Enviar pelo WhatsApp</a></div>
    <p class="hint" style="margin-bottom:0">Depois de copiar, abram a conversa com o líder no WhatsApp, toquem e segurem na caixa de mensagem e escolham Colar.</p></div>`;
 }
+let clearAsk='';
 function vDiag(){
+  const mode=S.dmode||'vez';
+  const doneE=INIT.every((p,a)=>p.every((_,k)=>S.diag.ele[a+'-'+k]));
+  const doneA=INIT.every((p,a)=>p.every((_,k)=>S.diag.ela[a+'-'+k]));
+  if(!S.dstep)S.dstep=(doneE&&doneA)?'juntos':(doneE?'ela':'ele');
+  const step=mode==='juntos'?'juntos':S.dstep, show=step==='juntos';
   const sc=areaScores(S.diag);
   const complete=sc.every(s=>s.ele!=null&&s.ela!=null);
   const tE=sc.reduce((a,s)=>a+(s.ele||0),0), tA=sc.reduce((a,s)=>a+(s.ela||0),0);
   const res=sc.map((s,a)=>{const diff=s.ele!=null&&s.ela!=null&&Math.abs(s.ele-s.ela)>=3;const lo=Math.min(s.ele??10,s.ela??10);const lv=lvl(lo);
     return `<div class="rrow"><span>${a+1}. ${L[a].t}${diff?' <span class="chip warn" title="Diferença de 3 pontos ou mais">conversem</span>':''}</span><div class="bars"><div class="bar ele"><i style="width:${(s.ele||0)*10}%"></i></div><div class="bar ela"><i style="width:${(s.ela||0)*10}%"></i></div></div><b class="${lv[1]}">${s.ele??'–'} / ${s.ela??'–'}</b></div>`}).join('');
   let cmp='';
-  if(S.snap.inicial&&S.snap.final){const a=areaScores(S.snap.inicial),b=areaScores(S.snap.final);
+  if(show&&S.snap.inicial&&S.snap.final){const a=areaScores(S.snap.inicial),b=areaScores(S.snap.final);
     cmp=`<div class="panel"><h3>Antes e depois do curso</h3><div style="overflow-x:auto"><table class="dt"><thead><tr><th>Área</th><th style="text-align:right">Ele antes</th><th style="text-align:right">Ele depois</th><th style="text-align:right">Ela antes</th><th style="text-align:right">Ela depois</th></tr></thead><tbody>${a.map((x,i)=>{const d1=(b[i].ele||0)-(x.ele||0),d2=(b[i].ela||0)-(x.ela||0);return `<tr><td>${L[i].t}</td><td class="n">${x.ele??'–'}</td><td class="n ${d1>0?'good':d1<0?'bad':''}">${b[i].ele??'–'}</td><td class="n">${x.ela??'–'}</td><td class="n ${d2>0?'good':d2<0?'bad':''}">${b[i].ela??'–'}</td></tr>`}).join('')}</tbody></table></div></div>`;}
+  const modes=`<div class="tabs" role="group" aria-label="Como vão responder"><button type="button" data-dmode="vez" aria-pressed="${mode==='vez'}">Cada um na sua vez</button><button type="button" data-dmode="juntos" aria-pressed="${mode==='juntos'}">Juntos, vendo tudo</button></div>`;
+  const banner=step==='ele'?`<div class="turn"><b>Vez dele.</b> Responda as 20 frases sem a esposa olhar. As notas dela ficam escondidas.</div>`:step==='ela'?`<div class="turn ela"><b>Vez dela.</b> Responda as 20 frases sem o marido olhar. As notas dele ficam escondidas.</div>`:'';
+  const qs=INIT.map((pair,a)=>pair.map((q,k)=>`<div class="q"><div><div class="area">${a+1}. ${L[a].t}</div><p>${q}</p></div>${step!=='ela'?seg('d-'+a+'-'+k,S.diag.ele[a+'-'+k],'ele'):'<span></span>'}${step!=='ele'?seg('d-'+a+'-'+k,S.diag.ela[a+'-'+k],'ela'):'<span></span>'}</div>`).join('')).join('');
+  const next=step==='ele'?`<div class="row" style="margin-top:14px"><button class="btn" type="button" data-dnext="ela" ${doneE?'':'disabled style="opacity:.5"'}>Terminei. Passar o celular para ela</button>${doneE?'':'<span class="hint">Faltam frases para responder.</span>'}</div>`
+    :step==='ela'?`<div class="row" style="margin-top:14px"><button class="btn" type="button" data-dnext="juntos" ${doneA?'':'disabled style="opacity:.5"'}>Terminei. Ver o resultado juntos</button><button class="btn ghost" type="button" data-dnext="ele">Voltar para a vez dele</button>${doneA?'':'<span class="hint">Faltam frases para responder.</span>'}</div>`:'';
+  const clearBox=clearAsk==='diag'?`<div class="confirm"><span>Apagar todas as respostas deste diagnóstico? Os diagnósticos já guardados (inicial e final) continuam salvos.</span><div class="row"><button class="btn small" type="button" id="dClearYes">Sim, limpar</button><button class="btn small ghost" type="button" id="dClearNo">Cancelar</button></div></div>`:'';
   return `<h1>Diagnóstico do casal</h1>
-  <p class="lead">Cada um responde sozinho, sem olhar a nota do outro. Depois, vejam o resultado juntos e conversem. 1 = nunca · 2 = poucas vezes · 3 = às vezes · 4 = muitas vezes · 5 = sempre.</p>
-  <div class="grid2">
-   <div class="panel" style="grid-column:1/-1">${INIT.map((pair,a)=>pair.map((q,k)=>`<div class="q"><div><div class="area">${a+1}. ${L[a].t}</div><p>${q}</p></div>${seg('d-'+a+'-'+k,S.diag.ele[a+'-'+k],'ele')}${seg('d-'+a+'-'+k,S.diag.ela[a+'-'+k],'ela')}</div>`).join('')).join('')}</div>
-  </div>
-  <div class="panel"><h3>Resultado por área</h3>
+  <p class="lead">Cada um responde sozinho, sem olhar a nota do outro. Depois, vejam o resultado juntos e conversem com sinceridade. 1 = nunca · 2 = poucas vezes · 3 = às vezes · 4 = muitas vezes · 5 = sempre. Para corrigir uma resposta, é só tocar em outro número.</p>
+  ${modes}${banner}
+  <div class="panel">${qs}${next}</div>
+  ${show?`<div class="panel"><h3>Resultado por área</h3>
    <div class="keyl"><span><i style="background:var(--primary)"></i>Ele</span><span><i style="background:var(--accent)"></i>Ela</span><span>cada área vai de 2 a 10</span></div>
    <div class="res">${res}</div>
    <p class="hint" style="margin-top:14px">Total: <b>ele ${tE}</b> · <b>ela ${tA}</b> (de 20 a 100). 9 a 10 área forte · 7 a 8 saudável · 5 a 6 atenção · 2 a 4 área ferida, procurem os líderes do curso.</p>
    ${complete?`<p style="margin:8px 0">Trilha de 30 dias indicada: <b>${TR[trailFor(Math.min(tE,tA))].n}</b> <a href="#trilha" style="color:var(--primary)">ver a trilha</a></p>`:''}
-   <div class="row" style="margin-top:6px">${complete?`<button class="btn" type="button" data-snap="inicial">${S.snap.inicial?'Atualizar':'Guardar como'} diagnóstico inicial</button><button class="btn ghost" type="button" data-snap="final">Guardar como diagnóstico final</button>`:`<span class="hint">Respondam todas as frases para guardar o diagnóstico.</span>`}</div>
-  </div>${complete?vShare(sc,tE,tA):''}${cmp}`;
+   <div class="row" style="margin-top:6px">${complete?`<button class="btn" type="button" data-snap="inicial">${S.snap.inicial?'Atualizar':'Guardar como'} diagnóstico inicial</button><button class="btn ghost" type="button" data-snap="final">Guardar como diagnóstico final</button>`:`<span class="hint">Respondam todas as frases para guardar o diagnóstico.</span>`}<button class="btn ghost" type="button" id="dClear">Limpar respostas</button></div>
+   ${clearBox}
+  </div>${complete?vShare(sc,tE,tA):''}${cmp}`:`<p class="hint">O resultado aparece quando os dois terminarem.${(doneE||doneA)?' <button class="linkbtn" type="button" id="dClear">Limpar respostas</button>':''}</p>${clearBox}`}`;
 }
 function vLicoes(){
   return `<h1>As dez lições</h1><p class="lead">Cada lição tem ensino, pesquisa, dinâmica, perguntas para o casal, sete dias de aplicação e um diagnóstico rápido.</p>
@@ -590,7 +607,7 @@ function vLicao(i){
    <div class="days">${d.days.map((x,k)=>`<label class="day ${s.days.includes(k)?'checked':''}"><input type="checkbox" data-day="${k}" ${s.days.includes(k)?'checked':''}><span><b>${mdInline(x[0])}</b>${mdInline(x[1])}</span></label>`).join('')}</div></div>
   <div class="panel"><h3>Diagnóstico da lição</h3><p class="scale">${mdInline(d.diagIntro)} Cada um responde por si.</p>
    ${d.diag.map((q,k)=>`<div class="q"><div><p>${mdInline(q)}</p></div>${seg('l-'+k,s.ele[k],'ele')}${seg('l-'+k,s.ela[k],'ela')}</div>`).join('')}
-   ${ver('ele')}${ver('ela')}${d.result?`<p class="hint" style="margin:12px 0 0">${mdInline(d.result)}</p>`:''}</div>
+   ${ver('ele')}${ver('ela')}${(Object.keys(s.ele).length||Object.keys(s.ela).length)?(clearAsk==='lic'?`<div class="confirm"><span>Apagar as notas do diagnóstico desta lição?</span><div class="row"><button class="btn small" type="button" id="lClearYes">Sim, limpar</button><button class="btn small ghost" type="button" id="lClearNo">Cancelar</button></div></div>`:'<button class="linkbtn" type="button" id="lClear" style="margin-top:10px">Limpar notas desta lição</button>'):''}${d.result?`<p class="hint" style="margin:12px 0 0">${mdInline(d.result)}</p>`:''}</div>
   <div class="panel"><h3>Nossas anotações</h3><textarea id="notes" placeholder="O que Deus falou conosco nesta lição, decisões que tomamos, pedidos de oração...">${esc(s.notes)}</textarea></div>
   <div class="pager">${i>0?`<a class="btn ghost" href="#licao-${i}">← Lição ${i}: ${L[i-1].t}</a>`:'<span></span>'}${i<9?`<a class="btn" href="#licao-${i+2}">Lição ${i+2}: ${L[i+1].t} →</a>`:`<a class="btn" href="#alianca">Firmar nossa aliança →</a>`}</div>`;
 }
@@ -648,6 +665,7 @@ function vPacto(){
 
 /* ---------- roteamento ---------- */
 function route(){
+  clearAsk='';
   const h=(location.hash||'#inicio').slice(1);
   let view='inicio',idx=-1;
   if(/^licao-([1-9]|10)$/.test(h)){view='licao';idx=+h.split('-')[1]-1}
@@ -665,6 +683,18 @@ function render(view,idx,keepScroll){
   if(keepScroll)window.scrollTo(0,y);else window.scrollTo(0,0);
 }
 function bind(){
+  document.querySelectorAll('[data-dmode]').forEach(b=>b.addEventListener('click',()=>{S.dmode=b.dataset.dmode;if(S.dmode==='vez'){const e=INIT.every((p,a)=>p.every((_,k)=>S.diag.ele[a+'-'+k])),f=INIT.every((p,a)=>p.every((_,k)=>S.diag.ela[a+'-'+k]));S.dstep=(e&&f)?'juntos':(e?'ela':'ele')}save();render('diagnostico',-1,true)}));
+  document.querySelectorAll('[data-dnext]').forEach(b=>b.addEventListener('click',()=>{if(b.disabled)return;S.dstep=b.dataset.dnext;save();render('diagnostico',-1);toast(S.dstep==='ela'?'Agora é a vez dela. As notas dele estão escondidas.':S.dstep==='juntos'?'Vejam o resultado juntos e conversem.':'Vez dele.')}));
+  const on=(id,f)=>{const b=$(id);if(b)b.addEventListener('click',f)};
+  on('dClear',()=>{clearAsk='diag';render(cur.view,cur.idx,true)});
+  on('dClearNo',()=>{clearAsk='';render(cur.view,cur.idx,true)});
+  on('dClearYes',()=>{clearAsk='';S.diag={ele:{},ela:{}};S.dstep='ele';save();render('diagnostico',-1);toast('Respostas apagadas. Podem começar de novo.')});
+  on('lClear',()=>{clearAsk='lic';render(cur.view,cur.idx,true)});
+  on('lClearNo',()=>{clearAsk='';render(cur.view,cur.idx,true)});
+  on('lClearYes',()=>{clearAsk='';const l=les(cur.idx);l.ele={};l.ela={};save();render(cur.view,cur.idx,true);toast('Notas da lição apagadas.')});
+  on('allClear',()=>{clearAsk='all';render(cur.view,cur.idx,true)});
+  on('allNo',()=>{clearAsk='';render(cur.view,cur.idx,true)});
+  on('allYes',()=>{try{localStorage.removeItem(KEY)}catch(e){}location.hash='#inicio';location.reload()});
   const sc0=$('shareCopy');if(sc0)sc0.addEventListener('click',()=>{const ta=$('shareTxt');const ok=()=>toast('Resumo copiado. Agora é só colar no WhatsApp do líder.');const fb=()=>{ta.focus();ta.select();toast('Toque e segure no texto selecionado e escolha Copiar.')};try{navigator.clipboard.writeText(ta.value).then(ok,fb)}catch(e){fb()}});
   const st=$('shareTxt');if(st)st.addEventListener('input',()=>{$('shareWa').href='https://wa.me/?text='+encodeURIComponent(st.value)});
   const cs=$('casal');if(cs)cs.addEventListener('change',()=>{S.casal=cs.value;save();render(cur.view,cur.idx,true)});
