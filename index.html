@@ -180,6 +180,13 @@ select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(-
 .turn.ela{background:color-mix(in srgb,var(--accent) 14%,var(--surface));border-color:var(--accent)}
 .confirm{margin-top:12px;padding:12px 14px;border-radius:10px;background:color-mix(in srgb,var(--bad) 10%,var(--surface));border:1px solid var(--bad);display:grid;gap:10px;font-size:.92rem}
 .linkbtn{font:inherit;font-size:.88rem;background:none;border:0;padding:4px 0;color:var(--muted);text-decoration:underline;cursor:pointer}
+.tutban{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:color-mix(in srgb,var(--accent) 12%,var(--surface));border-color:var(--accent)}
+.helpidx{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.helpidx a{font-size:.86rem;font-weight:600;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--primary);text-decoration:none}
+.help summary{cursor:pointer;font-weight:700;font-size:1.05rem;color:var(--primary);list-style-position:inside}
+.help[open] summary{margin-bottom:12px}
+.help .points li{margin-bottom:10px}
+.help{scroll-margin-top:120px}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-size:.9rem;z-index:20}
 .note{font-size:.8rem;color:var(--muted);margin-top:28px;max-width:70ch}
 @media (prefers-reduced-motion:no-preference){.bar i,.progress i,.mini i{transition:width .35s ease}}
@@ -204,6 +211,7 @@ select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(-
       <a href="#licoes" data-nav="licoes">Lições</a>
       <a href="#diario" data-nav="diario">Diário do casal</a>
       <a href="#alianca" data-nav="alianca">Nossa aliança</a>
+      <a href="#ajuda" data-nav="ajuda">Como usar</a>
     </nav>
   </div>
 </header>
@@ -515,7 +523,7 @@ function vInicio(){
   const prog=L.map((_,i)=>lesProgress(i)), total=Math.round(prog.reduce((a,p)=>a+Math.min(100,p.pct),0)/10);
   const next=L.findIndex((_,i)=>prog[i].pct<100);
   const hasDiag=!!S.snap.inicial;
-  return `<section class="hero panel">
+  return `${S.tutSeen?'':`<div class="panel tutban"><div><b>Primeira vez aqui?</b> Veja em poucos minutos como usar cada parte do app.</div><div class="row"><a class="btn small" href="#ajuda">Ver o passo a passo</a><button class="btn small ghost" type="button" id="tutHide">Agora não</button></div></div>`}<section class="hero panel">
     <div><h1>Bem-vindos ao Somos Um</h1>
     <p class="lead" style="margin-bottom:12px">Dez encontros para reformar a casa: do alicerce ao telhado. Façam cada passo juntos, no mesmo celular.</p>
     <div class="row"><a class="btn" href="${hasDiag?(next<0?'#alianca':'#licao-'+(next+1)):'#diagnostico'}">${hasDiag?(next<0?'Firmar nossa aliança':'Continuar: Lição '+(next+1)):'Começar pelo diagnóstico'}</a></div></div>
@@ -649,6 +657,62 @@ function vDiario(){
   }
   return `<h1>Diário do casal</h1><p class="lead">Três hábitos que sustentam a vida espiritual da casa: orar pelos mesmos pedidos, agradecer todos os dias e reunir a família diante de Deus.</p>${tabs}${body}`;
 }
+const HELP=[
+ {id:'comecar',t:'Antes de começar',go:'',steps:[
+  'Abram o link do app que o líder enviou no grupo do curso.',
+  'Coloquem o app na tela inicial do celular. No Android (Chrome): toquem nos três pontinhos, no canto superior direito, e escolham <b>Adicionar à tela inicial</b>. No iPhone (Safari): toquem no botão <b>Compartilhar</b> (o quadrado com a seta para cima) e escolham <b>Adicionar à Tela de Início</b>.',
+  'Usem sempre <b>o mesmo celular e o mesmo navegador</b>. As respostas ficam guardadas só nesse aparelho; em outro celular, o app abre vazio.',
+  'Ninguém vê as respostas de vocês: nem o líder, nem o pastor, nem a igreja. Só vocês dois.']},
+ {id:'diag',t:'1. Diagnóstico do casal',go:'#diagnostico',label:'Abrir o diagnóstico',steps:[
+  'Toquem em <b>Diagnóstico</b> no menu de cima. São 20 frases, duas para cada uma das 10 áreas do casamento.',
+  'Deixem marcado <b>Cada um na sua vez</b>. Primeiro aparece a <b>vez dele</b>: ele dá uma nota de 1 a 5 para cada frase, sem a esposa olhar.',
+  'Quando terminar, ele toca em <b>Terminei. Passar o celular para ela</b>. As notas dele somem da tela.',
+  'Na <b>vez dela</b>, ela responde as mesmas frases e toca em <b>Terminei. Ver o resultado juntos</b>.',
+  'Agora os dois veem as barras de cada área, o total e a trilha de 30 dias indicada. Onde aparecer <b>conversem</b>, as notas de vocês ficaram muito diferentes: é um bom ponto para conversar.',
+  'Toquem em <b>Guardar como diagnóstico inicial</b>. No fim do curso, refaçam e toquem em <b>Guardar como diagnóstico final</b> para ver o antes e depois.',
+  'Errou uma nota? É só tocar em outro número. Para começar de novo, use <b>Limpar respostas</b>.']},
+ {id:'lider',t:'2. Pedir ajuda ao líder',go:'#diagnostico',label:'Ir ao diagnóstico',steps:[
+  'Depois do resultado, desçam até o quadro <b>Compartilhar com o líder</b>.',
+  'Se quiserem, escrevam o nome do casal. O resumo aparece pronto na caixa de texto.',
+  'Podem apagar qualquer linha que preferirem não enviar.',
+  'Toquem em <b>Enviar pelo WhatsApp</b> e escolham o contato do líder ou do pastor. Ou toquem em <b>Copiar resumo para o líder</b> e colem na conversa.',
+  'Enviar é sempre escolha de vocês. Com o resumo, o líder sabe por onde começar a ajudar.']},
+ {id:'licoes',t:'3. As dez lições',go:'#licoes',label:'Ver as lições',steps:[
+  'Toquem em <b>Lições</b> e escolham a lição da semana. O texto é o mesmo da apostila impressa.',
+  'Depois do encontro, façam a <b>Aplicação diária</b>: uma atitude por dia, durante sete dias. Marquem a caixinha de cada dia cumprido.',
+  'No fim da semana, respondam o <b>Diagnóstico da lição</b>: cinco frases, uma nota para ele e uma para ela. O app mostra o resultado de cada um.',
+  'Usem <b>Nossas anotações</b> para guardar o que Deus falou com vocês, decisões e pedidos de oração.',
+  'Na <b>Lição 9</b>, o botão <b>Abrir a ferramenta</b> leva ao Mordomia a Dois.',
+  'A barrinha colorida em cada lição mostra o quanto vocês já fizeram. A tela Início mostra o progresso do curso inteiro.']},
+ {id:'trilha',t:'4. Trilha de 30 dias',go:'#trilha',label:'Abrir a trilha',steps:[
+  'Depois do diagnóstico, toquem em <b>Trilha de 30 dias</b>. O app já indica a trilha certa pela pontuação: Restauração e Cura, Reconexão e Ajuste ou Excelência e Legado.',
+  'Cada dia tem uma atitude e um versículo. Marquem a caixinha quando cumprirem.',
+  'No dia 29, refaçam o diagnóstico para ver o quanto avançaram.',
+  'Se quiserem, podem escolher outra trilha tocando no nome dela.']},
+ {id:'diario',t:'5. Diário do casal',go:'#diario',label:'Abrir o diário',steps:[
+  '<b>Pedidos de oração:</b> escrevam o pedido e toquem em <b>Anotar</b>. Quando Deus responder, toquem em <b>Deus respondeu</b>: a data da resposta fica registrada.',
+  '<b>Caixa de gratidão:</b> todo dia, um motivo de gratidão, dele, dela ou dos dois. Em semanas difíceis, leiam a caixa juntos.',
+  '<b>Culto no lar:</b> sigam a lista para preparar em 5 minutos, usem o roteiro simples e toquem em <b>Registrar</b> no fim de cada culto.']},
+ {id:'alianca',t:'6. Nossa aliança',go:'#alianca',label:'Abrir Nossa aliança',steps:[
+  'No último encontro, toquem em <b>Nossa aliança</b>.',
+  'Leiam juntos os dez compromissos e marquem os que assumem diante de Deus.',
+  'Escrevam os dois nomes e a data e toquem em <b>Firmar nossa aliança</b>. Aparece um certificado com os nomes de vocês.']},
+ {id:'mordomia',t:'7. Mordomia a Dois',go:'',steps:[
+  'É a ferramenta das finanças do casal, usada na Lição 9. Abram pela Lição 9 ou pelo quadro verde da tela Início.',
+  'Lá vocês fazem o diagnóstico financeiro, montam o plano para sair das dívidas, escrevem os sonhos com metas mensais e comparam investimentos.',
+  'Para voltar ao Somos Um, toquem em <b>← Voltar ao Somos Um</b>, no topo.']},
+ {id:'limpar',t:'Apagar e recomeçar',go:'',steps:[
+  '<b>Limpar respostas</b> (no diagnóstico): apaga as notas atuais e mantém os diagnósticos já guardados.',
+  '<b>Limpar notas desta lição</b>: fica embaixo do diagnóstico de cada lição.',
+  '<b>Apagar todos os dados deste celular</b>: no fim da tela Início. Apaga tudo do Somos Um neste aparelho e não dá para desfazer.',
+  'Todos esses botões pedem confirmação antes de apagar.']}
+];
+function vAjuda(){
+  return `<h1>Como usar o app</h1><p class="lead">O passo a passo de cada parte do Somos Um. Toquem num tema para abrir.</p>
+  <div class="helpidx">${HELP.map(h=>`<a href="#ajuda" data-help="${h.id}">${h.t}</a>`).join('')}</div>
+  ${HELP.map((h,i)=>`<details class="panel help" id="h-${h.id}" ${i===0?'open':''}><summary>${h.t}</summary><ol class="points">${h.steps.map(x=>`<li>${x}</li>`).join('')}</ol>${h.go?`<a class="btn small" href="${h.go}">${h.label}</a>`:''}</details>`).join('')}
+  <div class="panel"><h3>Ficou alguma dúvida?</h3><p style="margin:0">Falem com o casal líder do seu lar no encontro de sábado ou na reunião online de terça.</p></div>`;
+}
 function vPacto(){
   const p=S.pact, all=p.ok.length===PACT.length&&p.ele.trim()&&p.ela.trim();
   if(p.sealed)return `<div class="panel sealed"><svg width="80" height="60" viewBox="0 0 40 30" aria-hidden="true"><circle cx="14" cy="15" r="10" fill="none" stroke="var(--primary)" stroke-width="3"></circle><circle cx="26" cy="15" r="10" fill="none" stroke="var(--accent)" stroke-width="3"></circle></svg>
@@ -669,7 +733,7 @@ function route(){
   const h=(location.hash||'#inicio').slice(1);
   let view='inicio',idx=-1;
   if(/^licao-([1-9]|10)$/.test(h)){view='licao';idx=+h.split('-')[1]-1}
-  else if(['inicio','diagnostico','licoes','alianca','trilha','diario'].includes(h))view=h;
+  else if(['inicio','diagnostico','licoes','alianca','trilha','diario','ajuda'].includes(h))view=h;
   document.querySelectorAll('[data-nav]').forEach(a=>a.toggleAttribute('aria-current',a.dataset.nav===(view==='licao'?'licoes':view)));
   document.querySelectorAll('[data-nav]').forEach(a=>{if(a.hasAttribute('aria-current'))a.setAttribute('aria-current','page')});
   render(view,idx);
@@ -678,11 +742,14 @@ let cur={view:'inicio',idx:-1};
 function render(view,idx,keepScroll){
   cur={view,idx};
   const y=window.scrollY;
-  $('view').innerHTML=view==='diagnostico'?vDiag():view==='licoes'?vLicoes():view==='licao'?vLicao(idx):view==='alianca'?vPacto():view==='trilha'?vTrilha():view==='diario'?vDiario():vInicio();
+  $('view').innerHTML=view==='diagnostico'?vDiag():view==='licoes'?vLicoes():view==='licao'?vLicao(idx):view==='alianca'?vPacto():view==='trilha'?vTrilha():view==='diario'?vDiario():view==='ajuda'?vAjuda():vInicio();
   bind();
   if(keepScroll)window.scrollTo(0,y);else window.scrollTo(0,0);
 }
 function bind(){
+  const th=$('tutHide');if(th)th.addEventListener('click',()=>{S.tutSeen=true;save();render(cur.view,cur.idx,true)});
+  if(cur.view==='ajuda'){S.tutSeen=true;save()}
+  document.querySelectorAll('[data-help]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const d=$('h-'+a.dataset.help);if(d){d.open=true;d.scrollIntoView({behavior:'smooth',block:'start'})}}));
   document.querySelectorAll('[data-dmode]').forEach(b=>b.addEventListener('click',()=>{S.dmode=b.dataset.dmode;if(S.dmode==='vez'){const e=INIT.every((p,a)=>p.every((_,k)=>S.diag.ele[a+'-'+k])),f=INIT.every((p,a)=>p.every((_,k)=>S.diag.ela[a+'-'+k]));S.dstep=(e&&f)?'juntos':(e?'ela':'ele')}save();render('diagnostico',-1,true)}));
   document.querySelectorAll('[data-dnext]').forEach(b=>b.addEventListener('click',()=>{if(b.disabled)return;S.dstep=b.dataset.dnext;save();render('diagnostico',-1);toast(S.dstep==='ela'?'Agora é a vez dela. As notas dele estão escondidas.':S.dstep==='juntos'?'Vejam o resultado juntos e conversem.':'Vez dele.')}));
   const on=(id,f)=>{const b=$(id);if(b)b.addEventListener('click',f)};
